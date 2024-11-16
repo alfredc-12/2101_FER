@@ -4,6 +4,10 @@
  */
 package GUI;
 
+import Connectors.Connectosql;
+import GUI.EquipmentAdded;
+import java.sql.*;
+import javax.swing.JOptionPane;
 /**
  *
  * @author leyzu
@@ -13,8 +17,11 @@ public class AddEquipment extends javax.swing.JFrame {
     /**
      * Creates new form Menu_1
      */
+    private Connection connect;
     public AddEquipment() {
         initComponents();
+        Connectosql dbk = new Connectosql();
+        connect = dbk.getConnection();
     }
 
     /**
@@ -264,6 +271,11 @@ public class AddEquipment extends javax.swing.JFrame {
         Addbutton.setBackground(new java.awt.Color(102, 102, 102));
         Addbutton.setForeground(new java.awt.Color(255, 255, 255));
         Addbutton.setText("ADD");
+        Addbutton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AddbuttonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -324,6 +336,23 @@ public class AddEquipment extends javax.swing.JFrame {
     private void jFileChooser1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jFileChooser1ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jFileChooser1ActionPerformed
+
+    private void AddbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddbuttonActionPerformed
+String sEquipmentName =equimentName.getText();
+        String sPrice =PriceBox.getText();
+        String sCategory =categoryBox.getSelectedItem().toString();
+        
+        double PriceBox = Double.parseDouble(sPrice);
+        try {
+            Statement stmt = connect.createStatement();
+            String query = "INSERT INTO `add equipment` (`ID`, `EquipmentName`, `Category`, `Price`) VALUES (NULL, '"+sEquipmentName+"', '"+sCategory+"', '"+sPrice+"')";
+            stmt.execute(query);
+            JOptionPane.showMessageDialog(rootPane, "added succesfully", "", 0);
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(rootPane, "not added", "", 0);
+        }
+      
+    }//GEN-LAST:event_AddbuttonActionPerformed
 
     /**
      * @param args the command line arguments
