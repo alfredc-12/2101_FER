@@ -4,8 +4,15 @@
  */
 package GUI;
 
+import Connectors.Connectosql;
 import java.awt.BorderLayout;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.util.Base64;
+import javax.swing.JOptionPane;
 import javax.swing.*;
+import java.sql.SQLException;
+
 /**
  *
  * @author asadagreat
@@ -16,13 +23,14 @@ public class Main_Menu extends javax.swing.JPanel {
 /**
      * Creates new form Main_Menu
      */
-    private ImageFileTransferHandler imageFileTransferHandler;
+       private ImageFileTransferHandler imageFileTransferHandler;
+       private Connection connect;
         public Main_Menu() {
         initComponents();
-        // This part assumes the JPanel is named dropPanel in the GUI builder
         imageFileTransferHandler = new ImageFileTransferHandler(imagePanel);
         imagePanel.setTransferHandler(imageFileTransferHandler);
         imagePanel.setLayout(new BorderLayout());
+        // This part assumes the JPanel is named dropPanel in the GUI builder
     }
 
     /**
@@ -471,14 +479,28 @@ public class Main_Menu extends javax.swing.JPanel {
     }//GEN-LAST:event_equipmentNameActionPerformed
 
     private void AddbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddbuttonActionPerformed
-        // TODO add your handling code here:
+       
+        String equipID = "";
 
         String equipName = equipmentName.getText();
+        
         String category = categoryBox.getSelectedItem().toString();
+        if (category == "Camera") {
+            equipID = "1";
+        } else if (category == "Ligthing") {
+            equipID = "2";
+        } else if (category == "Audio") {
+            equipID = "3";
+        } else if (category == "Miscellaneous") {
+            equipID = "4";
+        }
+    
         String price = priceBox.getText();
         String desc = descBox.getText();
+        byte[] image = imageFileTransferHandler.getImageByteArray();
+        String Simage = Base64.getEncoder().encodeToString(image);
 
-        // Validate fields
+    // Validate fields
         if (equipName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Equipment Name is REQUIRED");
         } else if (category.isEmpty()) {
@@ -490,8 +512,26 @@ public class Main_Menu extends javax.swing.JPanel {
         } else if (imageFileTransferHandler.getImageByteArray() == null) {
             JOptionPane.showMessageDialog(null, "Image is REQUIRED");
         } else {
-            new EquipmentAdded().setVisible(true);
+            double PriceBox;
+            try {
+                PriceBox = Double.parseDouble(price);
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Price must be a valid number.", "Input Error", JOptionPane.ERROR_MESSAGE);
+                return; // Exit the method if the price is not valid
+            }
 
+            // Use the existing connection
+            try (Connection connect = Connectosql.getConnection();
+                 Statement stmt = connect.createStatement()) {
+
+                String query = "INSERT INTO equipment (EquipmentID, EquipmentName, EquipmentCategoryID, EquipmentPrice, EquipmentDesc, EquipmentImage) " +
+                        "VALUES ('1', '" + equipName + "', '" + equipID + "', '" + PriceBox + "', '" + desc + "', '" + Simage + "')";
+                stmt.execute(query);
+                new EquipmentAdded().setVisible(true);
+
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(null, "Error adding equipment: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
         }
 
     }//GEN-LAST:event_AddbuttonActionPerformed

@@ -4,8 +4,11 @@
  */
 package GUI;
 
+import Connectors.Connectosql;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import  java.sql.*;
+
 
 /**
  *
@@ -18,6 +21,7 @@ public class GuiFer extends javax.swing.JFrame {
      */
 
     public GuiFer() {
+        Connectosql dbk = new Connectosql();
         initComponents();  // Initialize the components (panels, buttons, etc.)
 
         // Assuming 'contentPanel' is your current JPanel, you can set its preferred size here
