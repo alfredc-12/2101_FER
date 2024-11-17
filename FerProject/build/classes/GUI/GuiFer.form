@@ -163,11 +163,6 @@
           </Layout>
         </Container>
         <Component class="javax.swing.JLabel" name="jLabel10">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\leyzu\Downloads\FER PROJECT\ICONS_IMGS\icons8-film-100-2.png"/>
-            </Property>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>

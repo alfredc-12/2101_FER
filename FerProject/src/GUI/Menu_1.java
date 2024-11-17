@@ -4,6 +4,9 @@
  */
 package GUI;
 
+
+import java.sql.*;
+
 /**
  *
  * @author leyzu
@@ -14,6 +17,7 @@ public class Menu_1 extends javax.swing.JFrame {
      * Creates new form Menu_1
      */
     public Menu_1() {
+        
         initComponents();
     }
 

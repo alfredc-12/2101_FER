@@ -4,6 +4,9 @@
  */
 package GUI;
 
+import Connectors.Connctosql;
+import java.sql.*;
+
 /**
  *
  * @author leyzu
@@ -14,6 +17,7 @@ public class Customer extends javax.swing.JFrame {
      * Creates new form Menu_1
      */
     public Customer() {
+        Connctosql dbk = new Connctosql();
         initComponents();
     }
 

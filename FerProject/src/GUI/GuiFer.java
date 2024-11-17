@@ -4,6 +4,8 @@
  */
 package GUI;
 
+import Connectors.Connectosql;
+import java.sql.*;
 /**
  *
  * @author leyzu
@@ -14,6 +16,7 @@ public class GuiFer extends javax.swing.JFrame {
      * Creates new form GuiFer
      */
     public GuiFer() {
+        Connectosql dbk = new Connectosql();
         initComponents();
     }
 

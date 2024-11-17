@@ -338,14 +338,14 @@ public class AddEquipment extends javax.swing.JFrame {
     }//GEN-LAST:event_jFileChooser1ActionPerformed
 
     private void AddbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddbuttonActionPerformed
-String sEquipmentName =equimentName.getText();
+        String sEquipmentName =equimentName.getText();
         String sPrice =PriceBox.getText();
         String sCategory =categoryBox.getSelectedItem().toString();
         
         double PriceBox = Double.parseDouble(sPrice);
         try {
             Statement stmt = connect.createStatement();
-            String query = "INSERT INTO `add equipment` (`ID`, `EquipmentName`, `Category`, `Price`) VALUES (NULL, '"+sEquipmentName+"', '"+sCategory+"', '"+sPrice+"')";
+            String query = "INSERT INTO `add equipment` (`ID`, `EquipmentName`, `EquipmentCategory`, `Price`) VALUES (NULL, '"+sEquipmentName+"', '"+sCategory+"', '"+sPrice+"')";
             stmt.execute(query);
             JOptionPane.showMessageDialog(rootPane, "added succesfully", "", 0);
         } catch (Exception e) {
