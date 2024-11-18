@@ -1,47 +1,35 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package Connectors;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import javax.swing.JOptionPane;
 
-/**
- *
- * @author Allend
- */
 public class Connectosql {
-    private static String url ="jdbc:mysql://localhost:3306/eqiupment";
-    private static String user ="root";
-    private static String pass ="";
-    
-    private static Connection connect;
-    private static Connectosql ctd;
-    
-     public Connectosql(){
-         connect = null;
-         try {
-             connect = DriverManager.getConnection(url, user, pass);
-             JOptionPane.showMessageDialog(null, "Connected Succesfull", "", 0);
-         
-         }catch (Exception e){
-             JOptionPane.showConfirmDialog(null, "Connection error", url, 0);
-         }
+    private static final String URL = "jdbc:mysql://localhost:3306/tester";
+    private static final String USER = "root";
+    private static final String PASS = "";
+
+    private static Connectosql instance;
+
+    private Connectosql() {
+        // Private constructor to prevent instantiation
     }
-     public static Connectosql getDBConnection() {
-        if (ctd== null){
-        ctd=new Connectosql();
+
+    public static synchronized Connectosql getInstance() {
+        if (instance == null) {
+            instance = new Connectosql();
         }
-                
-        return ctd;
+        return instance;
     }
-     public static Connection getConnection(){
-         
-        
+
+    public Connection getConnection() {
+        Connection connect = null;
+        try {
+            connect = DriverManager.getConnection(URL, USER, PASS);
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "Connection error: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+        }
         return connect;
-         
-        
     }
-     
 }

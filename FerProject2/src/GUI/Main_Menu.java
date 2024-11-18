@@ -23,8 +23,9 @@ public class Main_Menu extends javax.swing.JPanel {
 /**
      * Creates new form Main_Menu
      */
-       private ImageFileTransferHandler imageFileTransferHandler;
-       private Connection connect;
+        int counts = 0;
+        private ImageFileTransferHandler imageFileTransferHandler;
+        private Connection connect;
         public Main_Menu() {
         initComponents();
         imageFileTransferHandler = new ImageFileTransferHandler(imagePanel);
@@ -479,28 +480,26 @@ public class Main_Menu extends javax.swing.JPanel {
     }//GEN-LAST:event_equipmentNameActionPerformed
 
     private void AddbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddbuttonActionPerformed
-       
+        counts++;
         String equipID = "";
-
         String equipName = equipmentName.getText();
-        
         String category = categoryBox.getSelectedItem().toString();
-        if (category == "Camera") {
+        if (category.equals("Camera")) {
             equipID = "1";
-        } else if (category == "Ligthing") {
+        } else if (category.equals("Lighting")) {
             equipID = "2";
-        } else if (category == "Audio") {
+        } else if (category.equals("Audio")) {
             equipID = "3";
-        } else if (category == "Miscellaneous") {
+        } else if (category.equals("Miscellaneous")) {
             equipID = "4";
         }
-    
+
         String price = priceBox.getText();
         String desc = descBox.getText();
         byte[] image = imageFileTransferHandler.getImageByteArray();
         String Simage = Base64.getEncoder().encodeToString(image);
 
-    // Validate fields
+        // Validate fields
         if (equipName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Equipment Name is REQUIRED");
         } else if (category.isEmpty()) {
@@ -519,21 +518,30 @@ public class Main_Menu extends javax.swing.JPanel {
                 JOptionPane.showMessageDialog(null, "Price must be a valid number.", "Input Error", JOptionPane.ERROR_MESSAGE);
                 return; // Exit the method if the price is not valid
             }
-
             // Use the existing connection
-            try (Connection connect = Connectosql.getConnection();
+            try (Connection connect = Connectosql.getInstance().getConnection();
                  Statement stmt = connect.createStatement()) {
 
                 String query = "INSERT INTO equipment (EquipmentID, EquipmentName, EquipmentCategoryID, EquipmentPrice, EquipmentDesc, EquipmentImage) " +
-                        "VALUES ('1', '" + equipName + "', '" + equipID + "', '" + PriceBox + "', '" + desc + "', '" + Simage + "')";
+                        "VALUES (" + counts + ", '" + equipName + "', '" + equipID + "', '" + PriceBox + "', '" + desc + "', '" + Simage + "')";
                 stmt.execute(query);
                 new EquipmentAdded().setVisible(true);
+
+                // Clear all fields after successful addition
+                equipmentName.setText("");
+                categoryBox.setSelectedIndex(0);
+                priceBox.setText("");
+                descBox.setText("");
+                imageFileTransferHandler = new ImageFileTransferHandler(imagePanel); // Reset the image panel handler
+                imagePanel.setTransferHandler(imageFileTransferHandler);
+                imagePanel.removeAll(); // Clear the image from the panel
+                imagePanel.revalidate();
+                imagePanel.repaint();
 
             } catch (SQLException e) {
                 JOptionPane.showMessageDialog(null, "Error adding equipment: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-
     }//GEN-LAST:event_AddbuttonActionPerformed
 
     private void FullMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FullMActionPerformed

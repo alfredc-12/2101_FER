@@ -21,7 +21,7 @@ public class GuiFer extends javax.swing.JFrame {
      */
 
     public GuiFer() {
-        Connectosql dbk = new Connectosql();
+        Connectosql dbk = Connectosql.getInstance();
         initComponents();  // Initialize the components (panels, buttons, etc.)
 
         // Assuming 'contentPanel' is your current JPanel, you can set its preferred size here
