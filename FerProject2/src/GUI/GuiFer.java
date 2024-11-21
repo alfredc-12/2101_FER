@@ -4,11 +4,21 @@
  */
 package GUI;
 
-import Connectors.Connectosql;
+import GUI.CustomerSide.Customer;
+import GUI.Extras.RoundButtonUI;
+import GUI.AdminDashboard.Display_Inv;
+import GUI.AdminDashboard.PackageEquip;
+import GUI.AdminDashboard.ViewCusto;
+import GUI.AdminDashboard.Main_Menu;
+import GUI.Extras.Connectosql;
+import java.awt.Point;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import  java.sql.*;
-
+import java.sql.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionAdapter;
+import javax.swing.JComponent;
 
 /**
  *
@@ -19,25 +29,41 @@ public class GuiFer extends javax.swing.JFrame {
     /**
      * Creates new form GuiFer
      */
-
+    private Point initialClick;
+    private boolean isCustomerFrameOpen = false;
+    
     public GuiFer() {
         Connectosql dbk = Connectosql.getInstance();
-        initComponents();  // Initialize the components (panels, buttons, etc.)
-
-        // Assuming 'contentPanel' is your current JPanel, you can set its preferred size here
+        this.setUndecorated(true); 
+        initComponents(); 
+        
         JPanel contentPanel = new JPanel();
         contentPanel.setPreferredSize(new java.awt.Dimension(400, 300));
-        setResizable(false);// Set the desired size for the new panel
-
-        // Add the panel to the JFrame (content pane)
+        setResizable(false);
         this.getContentPane().add(contentPanel);
+        
+        // Create instances of other panels and add them to the content panel
+        Main_Menu menuMain = new Main_Menu(this); 
+        contentPanel.add(menuMain);
+        
+        ViewCusto custoView = new ViewCusto(this); 
+        contentPanel.add(custoView);
+        
+        PackageEquip equipPackage = new PackageEquip(this); 
+        contentPanel.add(equipPackage);
+        
+        Display_Inv invDisplay = new Display_Inv(this); 
+        contentPanel.add(invDisplay);
+        
+        enablePanelDragging(MainPanelDrag);
 
-        // Resize the JFrame to fit the preferred size of the panel
+        customizeButton();
+        
+        addExitButtonListener();
+
         this.pack();
-
-        // Set JFrame properties (optional)
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.setVisible(true);  // Make sure the frame is visible
+        this.setVisible(true); // Make sure the frame is visible
     }
 
     /**
@@ -57,7 +83,7 @@ public class GuiFer extends javax.swing.JFrame {
         jLabel9 = new javax.swing.JLabel();
         jPanel5 = new javax.swing.JPanel();
         jLabel10 = new javax.swing.JLabel();
-        jPanel1 = new javax.swing.JPanel();
+        mainPanel = new javax.swing.JPanel();
         jPanel2 = new javax.swing.JPanel();
         jPanel6 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -65,9 +91,10 @@ public class GuiFer extends javax.swing.JFrame {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         EnterButton = new javax.swing.JButton();
+        MainPanelDrag = new javax.swing.JPanel();
+        Resize_front = new javax.swing.JButton();
         Exit_front = new javax.swing.JButton();
-        MiniMize_front = new javax.swing.JButton();
-        Fullscreen_front = new javax.swing.JButton();
+        Minimize_front = new javax.swing.JButton();
 
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
         jPanel4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -162,8 +189,8 @@ public class GuiFer extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jPanel1.setBackground(new java.awt.Color(51, 51, 51));
-        jPanel1.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204), new java.awt.Color(0, 0, 0), new java.awt.Color(51, 51, 51)));
+        mainPanel.setBackground(new java.awt.Color(51, 51, 51));
+        mainPanel.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED, new java.awt.Color(153, 153, 153), new java.awt.Color(204, 204, 204), new java.awt.Color(0, 0, 0), new java.awt.Color(51, 51, 51)));
 
         jPanel2.setBackground(new java.awt.Color(102, 102, 102));
         jPanel2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
@@ -260,56 +287,75 @@ public class GuiFer extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 4, Short.MAX_VALUE))
+                .addGap(0, 6, Short.MAX_VALUE))
         );
 
+        MainPanelDrag.setBackground(new java.awt.Color(102, 102, 102));
+        MainPanelDrag.setBorder(javax.swing.BorderFactory.createEtchedBorder());
+
+        Resize_front.setBackground(new java.awt.Color(255, 204, 0));
+        Resize_front.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        Resize_front.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Resize_frontActionPerformed(evt);
+            }
+        });
+
         Exit_front.setBackground(new java.awt.Color(255, 0, 0));
+        Exit_front.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         Exit_front.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 Exit_frontActionPerformed(evt);
             }
         });
 
-        MiniMize_front.setBackground(new java.awt.Color(255, 204, 0));
-        MiniMize_front.addActionListener(new java.awt.event.ActionListener() {
+        Minimize_front.setBackground(new java.awt.Color(0, 255, 0));
+        Minimize_front.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        Minimize_front.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                MiniMize_frontActionPerformed(evt);
+                Minimize_frontActionPerformed(evt);
             }
         });
 
-        Fullscreen_front.setBackground(new java.awt.Color(0, 255, 0));
-        Fullscreen_front.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                Fullscreen_frontActionPerformed(evt);
-            }
-        });
+        javax.swing.GroupLayout MainPanelDragLayout = new javax.swing.GroupLayout(MainPanelDrag);
+        MainPanelDrag.setLayout(MainPanelDragLayout);
+        MainPanelDragLayout.setHorizontalGroup(
+            MainPanelDragLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainPanelDragLayout.createSequentialGroup()
+                .addGap(9, 9, 9)
+                .addComponent(Exit_front, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Resize_front, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(Minimize_front, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        MainPanelDragLayout.setVerticalGroup(
+            MainPanelDragLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(MainPanelDragLayout.createSequentialGroup()
+                .addGap(4, 4, 4)
+                .addGroup(MainPanelDragLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(Minimize_front, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Resize_front, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Exit_front, javax.swing.GroupLayout.PREFERRED_SIZE, 12, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 5, Short.MAX_VALUE))
+        );
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(Exit_front, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(MiniMize_front, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(Fullscreen_front, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+        javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
+        mainPanel.setLayout(mainPanelLayout);
+        mainPanelLayout.setHorizontalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
+            .addComponent(MainPanelDrag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(MiniMize_front, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
-                    .addComponent(Fullscreen_front, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(Exit_front, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
+        mainPanelLayout.setVerticalGroup(
+            mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(mainPanelLayout.createSequentialGroup()
+                .addComponent(MainPanelDrag, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(9, 9, 9))
         );
@@ -320,26 +366,86 @@ public class GuiFer extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addGap(0, 0, Short.MAX_VALUE)
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(mainPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void openCustomerFrame() {
+        if (!isCustomerFrameOpen) {
+            Customer customerFrame = new Customer();
+            customerFrame.setVisible(true);
+            isCustomerFrameOpen = true; // Update flag when frame is opened
+
+            // Add a listener to reset the flag when the frame is closed
+            customerFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                    isCustomerFrameOpen = false;
+                }
+            });
+        }
+    }
+    
+    private void customizeButton() {
+        // Assuming the button is named exitButton in the design mode
+        Exit_front.setUI(new RoundButtonUI());
+        Minimize_front.setUI(new RoundButtonUI());
+        Resize_front.setUI(new RoundButtonUI());
+    }
+    
+    private void addExitButtonListener() {
+        // Assuming the button is named exitButton in your GUI builder
+        Exit_front.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                Exit_frontActionPerformed(evt);
+            }
+        });
+    }
+    
+    public void enablePanelDragging(JComponent component) {
+        final Point[] initialClick = new Point[1]; // Use array to allow final variable in inner class
+        component.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+                initialClick[0] = e.getPoint();
+            }
+        });
+
+        component.addMouseMotionListener(new MouseMotionAdapter() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                // Get location of the JFrame
+                int thisX = getLocation().x;
+                int thisY = getLocation().y;
+
+                // Determine how much the mouse moved since the initial click
+                int xMoved = e.getX() - initialClick[0].x;
+                int yMoved = e.getY() - initialClick[0].y;
+
+                // Move the JFrame to its new location
+                int x = thisX + xMoved;
+                int y = thisY + yMoved;
+                setLocation(x, y);
+            }
+        });
+    }
+
     private void EnterButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnterButtonActionPerformed
         // TODO add your handling code here:
-        Main_Menu menu = new Main_Menu();
+            Main_Menu menu = new Main_Menu(this);
 
-        this.setContentPane(menu);
+            this.setContentPane(menu);
 
-        this.pack();
+            this.pack();
 
-        this.revalidate();
-        this.repaint();   
+            this.revalidate();
+            this.repaint();   
     }//GEN-LAST:event_EnterButtonActionPerformed
 
     private void EnterButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EnterButton1ActionPerformed
@@ -348,15 +454,18 @@ public class GuiFer extends javax.swing.JFrame {
 
     private void Exit_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Exit_frontActionPerformed
         // TODO add your handling code here:
+        this.dispose();
     }//GEN-LAST:event_Exit_frontActionPerformed
 
-    private void MiniMize_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MiniMize_frontActionPerformed
+    private void Resize_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Resize_frontActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_MiniMize_frontActionPerformed
+    }//GEN-LAST:event_Resize_frontActionPerformed
 
-    private void Fullscreen_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Fullscreen_frontActionPerformed
+    private void Minimize_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Minimize_frontActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_Fullscreen_frontActionPerformed
+        this.setState(JFrame.ICONIFIED);
+    }//GEN-LAST:event_Minimize_frontActionPerformed
+
 
     /**
      * @param args the command line arguments
@@ -397,8 +506,9 @@ public class GuiFer extends javax.swing.JFrame {
     private javax.swing.JButton EnterButton;
     private javax.swing.JButton EnterButton1;
     private javax.swing.JButton Exit_front;
-    private javax.swing.JButton Fullscreen_front;
-    private javax.swing.JButton MiniMize_front;
+    private javax.swing.JPanel MainPanelDrag;
+    private javax.swing.JButton Minimize_front;
+    private javax.swing.JButton Resize_front;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel2;
@@ -407,11 +517,11 @@ public class GuiFer extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel mainPanel;
     // End of variables declaration//GEN-END:variables
 }
