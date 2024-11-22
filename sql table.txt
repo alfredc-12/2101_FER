@@ -1,0 +1,282 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Nov 22, 2024 at 04:57 PM
+-- Server version: 10.4.32-MariaDB
+-- PHP Version: 8.0.30
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `tester`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customerlist`
+--
+
+CREATE TABLE `customerlist` (
+  `CustomerListID` int(11) NOT NULL,
+  `CustomerOrderID` int(11) NOT NULL,
+  `EquipmentID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customerorder`
+--
+
+CREATE TABLE `customerorder` (
+  `CustomerOrderID` int(11) NOT NULL,
+  `CustomerPaymentID` int(11) NOT NULL,
+  `CustomerStartDate` date NOT NULL,
+  `CustomerEndDate` date NOT NULL,
+  `TotalCost` int(255) NOT NULL,
+  `UserID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `customerpayment`
+--
+
+CREATE TABLE `customerpayment` (
+  `CustomerPaymentID` int(11) NOT NULL,
+  `PaymentMethod` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `customerpayment`
+--
+
+INSERT INTO `customerpayment` (`CustomerPaymentID`, `PaymentMethod`) VALUES
+(1, 'Cash'),
+(2, 'Card'),
+(3, 'Cheque'),
+(4, 'Online');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `equipment`
+--
+
+CREATE TABLE `equipment` (
+  `EquipmentID` int(11) NOT NULL,
+  `EquipmentName` varchar(100) DEFAULT NULL,
+  `EquipmentCategoryID` varchar(100) DEFAULT NULL,
+  `EquipmentPrice` decimal(10,2) DEFAULT NULL,
+  `EquipmentDesc` text DEFAULT NULL,
+  `EquipmentImage` longblob DEFAULT NULL,
+  `EquipmentAvailability` tinyint(1) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `equipment`
+--
+
+INSERT INTO `equipment` (`EquipmentID`, `EquipmentName`, `EquipmentCategoryID`, `EquipmentPrice`, `EquipmentDesc`, `EquipmentImage`, `EquipmentAvailability`) VALUES
+(1, 'Canon DSLR Camera', '1', 500.00, 'High-quality professional DSLR camera.', NULL, 1),
+(2, 'Tripod Stand', '2', 150.00, 'Adjustable tripod stand for cameras.', NULL, 1),
+(3, 'LED Lighting Kit', '3', 300.00, 'Portable LED lighting for shoots.', NULL, 1),
+(4, 'Boom Microphone', '4', 120.00, 'Directional microphone with wind shield.', NULL, 1),
+(5, 'GoPro Hero 9', '1', 350.00, 'Compact action camera with 5K video.', NULL, 1),
+(6, 'Softbox Lighting', '3', 200.00, 'Softbox for diffused lighting.', NULL, 1),
+(7, 'DJI Drone', '1', 800.00, '4K drone with stabilizer.', NULL, 1),
+(8, 'Backdrop Stand', '2', 100.00, 'Adjustable stand for backdrops.', NULL, 1),
+(9, 'Audio Mixer', '4', 450.00, '4-channel audio mixer.', NULL, 1),
+(10, 'Wireless Lavalier Mic', '4', 250.00, 'Wireless microphone system.', NULL, 1),
+(11, 'Camera Slider', '2', 180.00, 'Motorized camera slider.', NULL, 1),
+(12, 'Green Screen Kit', '2', 120.00, 'Collapsible green screen.', NULL, 1),
+(13, 'Telephoto Lens', '1', 600.00, 'Professional telephoto lens for cameras.', NULL, 1),
+(14, 'Light Reflector', '3', 80.00, 'Collapsible light reflector.', NULL, 1),
+(15, 'Steadicam Rig', '2', 700.00, 'Stabilizing rig for cameras.', NULL, 1),
+(16, 'HDMI Monitor', '2', 300.00, '7-inch HDMI monitor for camera previews.', NULL, 1),
+(17, 'Studio Headphones', '4', 150.00, 'Noise-canceling studio headphones.', NULL, 1),
+(18, 'Camera Gimbal', '2', 500.00, '3-axis gimbal for stabilization.', NULL, 1),
+(19, 'Video Recorder', '1', 400.00, 'Portable 4K video recorder.', NULL, 1),
+(20, 'Portable Power Bank', '3', 50.00, 'Portable power bank for gear.', NULL, 1),
+(21, 'Canon EOS R5', '1', 218344.00, '45MP full-frame mirrorless, 8K video recording.', NULL, 1),
+(22, 'Sony Alpha 7 IV', '1', 139888.00, '33MP full-frame hybrid camera, 4K 60p video.', NULL, 1),
+(23, 'Nikon Z9', '1', 307944.00, '45.7MP full-frame flagship, 8K video, no mechanical shutter.', NULL, 1),
+(24, 'Fujifilm X-T4', '1', 95144.00, '26.1MP APS-C mirrorless, in-body stabilization.', NULL, 1),
+(25, 'Panasonic Lumix GH5 II', '1', 83832.00, '20.3MP Micro Four Thirds, live-streaming features.', NULL, 1),
+(26, 'Olympus OM-D E-M1 Mark III', '1', 100744.00, 'Compact Micro Four Thirds camera, 60fps burst shooting.', NULL, 1),
+(27, 'Canon EOS R6', '1', 139944.00, '20MP full-frame mirrorless, advanced autofocus.', NULL, 1),
+(28, 'Sony Alpha 7S III', '1', 195888.00, 'Low-light specialist, 12.1MP full-frame, 4K 120p video.', NULL, 1),
+(29, 'Nikon Z6 II', '1', 111776.00, '24.5MP full-frame, dual processors, 4K 60p video.', NULL, 1),
+(30, 'Fujifilm GFX 100S', '1', 335944.00, '102MP medium-format mirrorless, compact body.', NULL, 1),
+(31, 'Panasonic Lumix S1H', '1', 223832.00, 'Full-frame video-centric mirrorless camera, 6K recording.', NULL, 1),
+(32, 'Leica SL2', '1', 391720.00, '47MP full-frame, premium build, iconic design.', NULL, 1),
+(33, 'Canon EOS M50 Mark II', '1', 33544.00, 'Compact APS-C mirrorless, vlogger-friendly.', NULL, 1),
+(34, 'Sony ZV-E10', '1', 44688.00, 'Mirrorless vlogging camera, 24.2MP APS-C sensor.', NULL, 1),
+(35, 'Nikon D850', '1', 167776.00, '45.7MP full-frame DSLR, highly versatile.', NULL, 1),
+(36, 'Godox SL-60W', '2', 7224.00, 'LED video light, adjustable brightness, daylight balance.', NULL, 1),
+(37, 'Neewer 660 LED', '2', 5544.00, 'Bi-color LED panel with adjustable light settings.', NULL, 1),
+(38, 'Aputure Light Storm C120D II', '2', 41720.00, 'Powerful, durable LED studio light.', NULL, 1),
+(39, 'Elgato Key Light', '2', 11144.00, 'Premium LED for streamers and content creators.', NULL, 1),
+(40, 'Lume Cube 2.0', '2', 4984.00, 'Compact, portable lighting for photo and video.', NULL, 1),
+(41, 'Profoto B10 Plus', '2', 117320.00, 'High-end portable flash and continuous light.', NULL, 1),
+(42, 'Yongnuo YN300 Air', '2', 3304.00, 'Slim LED panel with adjustable brightness.', NULL, 1),
+(43, 'Falcon Eyes F7', '2', 7224.00, 'RGB LED with adjustable color and effects.', NULL, 1),
+(44, 'Genaray LED-7100T', '2', 8344.00, 'LED panel with excellent light coverage.', NULL, 1),
+(45, 'Nanlite Forza 60', '2', 12264.00, 'Compact yet powerful LED studio light.', NULL, 1),
+(46, 'Canon EF 50mm f/1.8 STM', '3', 7000.00, 'Affordable, versatile prime lens for portraits.', NULL, 1),
+(47, 'Sony FE 24-70mm f/2.8 GM', '3', 123088.00, 'High-performance zoom lens for professionals.', NULL, 1),
+(48, 'Nikon NIKKOR Z 24-70mm f/2.8 S', '3', 128632.00, 'Premium zoom lens with excellent optics.', NULL, 1),
+(49, 'Sigma 35mm f/1.4 DG HSM Art', '3', 47544.00, 'Fast aperture lens with outstanding sharpness.', NULL, 1),
+(50, 'Tamron 28-75mm f/2.8 Di III RXD', '3', 44744.00, 'Compact, versatile zoom lens.', NULL, 1),
+(51, 'Fujifilm XF 16-55mm f/2.8 R LM WR', '3', 67144.00, 'Weather-resistant lens with superb optics.', NULL, 1),
+(52, 'Panasonic Lumix G X Vario 12-35mm f/2.8 II ASPH', '3', 50232.00, 'Micro Four Thirds lens, fast and sharp.', NULL, 1),
+(53, 'Olympus M.ZuikoDigital ED 12-40mm f/2.8 PRO', '3', 55944.00, 'Durable lens for Micro Four Thirds cameras.', NULL, 1),
+(54, 'Canon RF 24-105mm f/4L IS USM', '3', 61544.00, 'Versatile zoom lens with image stabilization.', NULL, 1),
+(55, 'Sony FE 85mm f/1.8', '3', 33488.00, 'Affordable portrait prime lens with superb bokeh.', NULL, 1),
+(56, 'Nikon AF-S NIKKOR 50mm f/1.4G', '3', 24976.00, 'Classic prime lens with fast aperture.', NULL, 1),
+(57, 'Sigma 85mm f/1.4 DG HSM Art', '3', 67144.00, 'Professional portrait lens with creamy bokeh.', NULL, 1),
+(58, 'Tamron SP 70-200mm f/2.8 Di VC USD G2', '3', 72744.00, 'Telephoto zoom lens with image stabilization.', NULL, 1),
+(59, 'Fujifilm XF 23mm f/1.4 R', '3', 47544.00, 'Wide-angle prime lens with fast aperture.', NULL, 1),
+(60, 'Panasonic Leica DG Vario-Elmarit 12-60mm f/2.8-4 ASPH', '3', 55832.00, 'Versatile zoom lens.', NULL, 1),
+(61, 'SanDisk Extreme Pro SDXC UHS-I Card', '4', 2744.00, 'High-speed SD card for photography and video.', NULL, 1),
+(62, 'Manfrotto 055 Aluminum Tripod', '4', 13944.00, 'Durable tripod with adjustable height.', NULL, 1),
+(63, 'Peak Design Capture Clip', '4', 3864.00, 'Convenient clip for carrying cameras.', NULL, 1),
+(64, 'Rode VideoMic Pro+', '4', 16744.00, 'High-quality shotgun microphone for video recording.', NULL, 1),
+(65, 'Lowepro ProTactic 450 AW II Camera Backpack', '4', 13944.00, 'Rugged, modular camera backpack.', NULL, 1),
+(66, 'DJI Ronin-S Gimbal', '4', 41944.00, 'Stabilizer for smooth video shooting.', NULL, 1),
+(67, 'Think Tank Photo Cable Management', '4', 1960.00, 'Organized storage for cables and accessories.', NULL, 1),
+(68, 'Tiffen Variable ND Filter', '4', 7224.00, 'Adjustable neutral density filter for photography.', NULL, 1),
+(69, 'Neewer Carbon Fiber Handheld Stabilizer', '4', 4984.00, 'Lightweight stabilizer for cameras.', NULL, 1),
+(70, 'Wacom Intuos Pro Pen Tablet', '4', 21224.00, 'Professional drawing tablet for creatives.', NULL, 1);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `equipmentcategory`
+--
+
+CREATE TABLE `equipmentcategory` (
+  `EquipmentCategoryID` int(11) NOT NULL,
+  `CatergoryName` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `equipmentcategory`
+--
+
+INSERT INTO `equipmentcategory` (`EquipmentCategoryID`, `CatergoryName`) VALUES
+(1, 'Camera'),
+(2, 'Lighting'),
+(3, 'Audio'),
+(4, 'Miscellaneous');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `userlist`
+--
+
+CREATE TABLE `userlist` (
+  `UserID` int(11) NOT NULL,
+  `CustomerName` varchar(100) NOT NULL,
+  `CustomerEmail` int(100) NOT NULL,
+  `CustomerPassword` int(100) NOT NULL,
+  `CustomerAddress` text NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `customerlist`
+--
+ALTER TABLE `customerlist`
+  ADD PRIMARY KEY (`CustomerListID`);
+
+--
+-- Indexes for table `customerorder`
+--
+ALTER TABLE `customerorder`
+  ADD PRIMARY KEY (`CustomerOrderID`);
+
+--
+-- Indexes for table `customerpayment`
+--
+ALTER TABLE `customerpayment`
+  ADD PRIMARY KEY (`CustomerPaymentID`);
+
+--
+-- Indexes for table `equipment`
+--
+ALTER TABLE `equipment`
+  ADD PRIMARY KEY (`EquipmentID`);
+
+--
+-- Indexes for table `equipmentcategory`
+--
+ALTER TABLE `equipmentcategory`
+  ADD PRIMARY KEY (`EquipmentCategoryID`);
+
+--
+-- Indexes for table `userlist`
+--
+ALTER TABLE `userlist`
+  ADD PRIMARY KEY (`UserID`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `customerlist`
+--
+ALTER TABLE `customerlist`
+  MODIFY `CustomerListID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `customerorder`
+--
+ALTER TABLE `customerorder`
+  MODIFY `CustomerOrderID` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `customerpayment`
+--
+ALTER TABLE `customerpayment`
+  MODIFY `CustomerPaymentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `equipment`
+--
+ALTER TABLE `equipment`
+  MODIFY `EquipmentID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=71;
+
+--
+-- AUTO_INCREMENT for table `equipmentcategory`
+--
+ALTER TABLE `equipmentcategory`
+  MODIFY `EquipmentCategoryID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `userlist`
+--
+ALTER TABLE `userlist`
+  MODIFY `UserID` int(11) NOT NULL AUTO_INCREMENT;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
