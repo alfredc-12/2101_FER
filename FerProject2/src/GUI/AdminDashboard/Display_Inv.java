@@ -559,7 +559,7 @@ public class Display_Inv extends javax.swing.JPanel {
     
     private void EditbuttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditbuttonActionPerformed
         // TODO add your handling code here:
-         int selectedRow = equipmentTable.getSelectedRow();
+        int selectedRow = equipmentTable.getSelectedRow();
             if (selectedRow != -1) {
                 // Retrieve data from the selected row
                 String name = (String) tableModel.getValueAt(selectedRow, 0);

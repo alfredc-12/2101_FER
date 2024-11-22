@@ -573,7 +573,6 @@ public class Main_Menu extends javax.swing.JPanel {
     
     private void DisplayButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisplayButActionPerformed
         // TODO add your handling code here:
-        
         GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
         
         Display_Inv display = new Display_Inv(parentFrame);
@@ -611,6 +610,7 @@ public class Main_Menu extends javax.swing.JPanel {
 
         parentFrame.revalidate();
         parentFrame.repaint();
+        
     }//GEN-LAST:event_CustomerOrderButActionPerformed
 
     private void equipmentNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_equipmentNameActionPerformed

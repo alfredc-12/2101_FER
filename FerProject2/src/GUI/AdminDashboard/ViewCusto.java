@@ -4,12 +4,24 @@
  */
 package GUI.AdminDashboard;
 
+import java.sql.*;
+import java.sql.Connection;
+import java.sql.Statement;
+import java.sql.SQLException;
 import GUI.AdminDashboard.Display_Inv;
 import GUI.AdminDashboard.Main_Menu;
 import GUI.AdminDashboard.Main_Menu;
 import GUI.AdminDashboard.PackageEquip;
+import GUI.Extras.CustomerOrder;
+import GUI.Extras.CustomerOrderDAO;
+import GUI.Extras.EquipmentCount;
 import GUI.GuiFer;
+import java.util.List;
 import javax.swing.JFrame;
+import javax.swing.JTable;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -21,10 +33,14 @@ public class ViewCusto extends javax.swing.JPanel {
      * Creates new form ViewCusto
      */
     private GuiFer parentFrame;
-    
+    private Connection connect;
+    private DefaultTableModel tableModel;
+    private CustomerOrderDAO customerOrderDAO = new CustomerOrderDAO(); 
+    private String currentQuery = "";
     public ViewCusto(GuiFer frame) {
         this.parentFrame = frame;
         initComponents();
+        postInitComponents();
         parentFrame.enablePanelDragging(MainPanelDrag);
         parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
@@ -40,14 +56,11 @@ public class ViewCusto extends javax.swing.JPanel {
 
         jPanel1 = new javax.swing.JPanel();
         EmptyPannel1 = new javax.swing.JPanel();
-        jPanel4 = new javax.swing.JPanel();
-        jLabel6 = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        jLabel8 = new javax.swing.JLabel();
-        jLabel9 = new javax.swing.JLabel();
-        jLabel10 = new javax.swing.JLabel();
         customerScroll = new javax.swing.JScrollPane();
-        ViewCus1 = new javax.swing.JButton();
+        customerTable = new javax.swing.JTable();
+        ViewCus = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
+        searchField = new javax.swing.JTextField();
         jPanel2 = new javax.swing.JPanel();
         DisplayBut = new javax.swing.JButton();
         BundleBut = new javax.swing.JButton();
@@ -72,72 +85,34 @@ public class ViewCusto extends javax.swing.JPanel {
         EmptyPannel1.setBackground(new java.awt.Color(102, 102, 102));
         EmptyPannel1.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "FER", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
 
-        jPanel4.setBackground(new java.awt.Color(51, 51, 51));
-        jPanel4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel4.setForeground(new java.awt.Color(255, 255, 255));
+        customerTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Name", "Email", "Phone", "Address"
+            }
+        ));
+        customerScroll.setViewportView(customerTable);
 
-        jLabel6.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel6.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel6.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel6.setText("NAME");
-
-        jLabel7.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel7.setText("PHONE");
-
-        jLabel8.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel8.setText("START DATE");
-
-        jLabel9.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel9.setText("END DATE");
-
-        jLabel10.setBackground(new java.awt.Color(255, 255, 255));
-        jLabel10.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel10.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel10.setText("COST");
-
-        javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
-        jPanel4.setLayout(jPanel4Layout);
-        jPanel4Layout.setHorizontalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(35, 35, 35)
-                .addComponent(jLabel6)
-                .addGap(87, 87, 87)
-                .addComponent(jLabel7)
-                .addGap(165, 165, 165)
-                .addComponent(jLabel8)
-                .addGap(144, 144, 144)
-                .addComponent(jLabel9)
-                .addGap(169, 169, 169)
-                .addComponent(jLabel10)
-                .addContainerGap(53, Short.MAX_VALUE))
-        );
-        jPanel4Layout.setVerticalGroup(
-            jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                .addContainerGap(7, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel6)
-                    .addComponent(jLabel7)
-                    .addComponent(jLabel8)
-                    .addComponent(jLabel10)
-                    .addComponent(jLabel9))
-                .addContainerGap())
-        );
-
-        ViewCus1.setBackground(new java.awt.Color(51, 51, 51));
-        ViewCus1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        ViewCus1.setForeground(new java.awt.Color(255, 255, 255));
-        ViewCus1.setText("View Customer");
-        ViewCus1.addActionListener(new java.awt.event.ActionListener() {
+        ViewCus.setBackground(new java.awt.Color(51, 51, 51));
+        ViewCus.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        ViewCus.setForeground(new java.awt.Color(255, 255, 255));
+        ViewCus.setText("View Customer");
+        ViewCus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ViewCus1ActionPerformed(evt);
+                ViewCusActionPerformed(evt);
+            }
+        });
+
+        jLabel1.setText("Search");
+
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
             }
         });
 
@@ -145,26 +120,30 @@ public class ViewCusto extends javax.swing.JPanel {
         EmptyPannel1.setLayout(EmptyPannel1Layout);
         EmptyPannel1Layout.setHorizontalGroup(
             EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EmptyPannel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(ViewCus1)
-                .addGap(317, 317, 317))
             .addGroup(EmptyPannel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(customerScroll)
-                    .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EmptyPannel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                        .addComponent(ViewCus)
+                        .addGap(317, 317, 317))
+                    .addGroup(EmptyPannel1Layout.createSequentialGroup()
+                        .addComponent(customerScroll)
+                        .addContainerGap())))
         );
         EmptyPannel1Layout.setVerticalGroup(
             EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EmptyPannel1Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(customerScroll)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(customerScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 480, Short.MAX_VALUE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ViewCus1)
+                .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(ViewCus)
+                    .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel1)))
                 .addContainerGap())
         );
 
@@ -332,7 +311,7 @@ public class ViewCusto extends javax.swing.JPanel {
                 .addComponent(BundleBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(CustomerOrderBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -431,9 +410,79 @@ public class ViewCusto extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     
-    private void ViewCus1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewCus1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ViewCus1ActionPerformed
+    private void postInitComponents() {
+        String[] columnNames = {"Name", "Email", "Phone", "Address"};
+
+        tableModel = new DefaultTableModel(columnNames, 0);
+
+        customerTable.setModel(tableModel);
+
+        customerScroll.setViewportView(customerTable);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable();
+            }
+        });
+
+        refreshTable();
+    }
+
+    private void filterTable() {
+        currentQuery = searchField.getText().toLowerCase();
+        refreshTable();
+    }
+
+    public void refreshTable() {
+        List<CustomerOrder> customerOrders = customerOrderDAO.getCustomerOrders();
+        tableModel.setRowCount(0); // Clear existing rows
+
+        for (CustomerOrder customerOrder : customerOrders) {
+            if (customerOrder.getName().toLowerCase().contains(currentQuery) || 
+                customerOrder.getEmail().toLowerCase().contains(currentQuery) || 
+                customerOrder.getPhone().toLowerCase().contains(currentQuery) || 
+                customerOrder.getAddress().toLowerCase().contains(currentQuery)) {
+
+                Object[] rowData = {
+                    customerOrder.getName(),
+                    customerOrder.getEmail(),
+                    customerOrder.getPhone(),
+                    customerOrder.getAddress()
+                };
+                tableModel.addRow(rowData);
+            }
+        }
+    }
+    
+    private void ViewCusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewCusActionPerformed
+        int selectedRow = customerTable.getSelectedRow();
+            if (selectedRow != -1) {
+                // Retrieve data from the selected row
+                String name = (String) tableModel.getValueAt(selectedRow, 0);
+                String email = (String) tableModel.getValueAt(selectedRow, 1);
+                String phone = (String) tableModel.getValueAt(selectedRow, 2);
+                String address = (String) tableModel.getValueAt(selectedRow, 3);
+
+                // Fetch detailed information from the database based on the name
+                CustomerOrder customerOrder = customerOrderDAO.getCustomerOrderByName(name);
+
+                // Open and populate the EditCustomer frame
+                viewCustomer editFrame = new viewCustomer(customerOrder, this);
+                editFrame.setVisible(true);
+    }
+
+    }//GEN-LAST:event_ViewCusActionPerformed
 
     private void DisplayButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisplayButActionPerformed
         // TODO add your handling code here:
@@ -447,6 +496,8 @@ public class ViewCusto extends javax.swing.JPanel {
 
         parentFrame.revalidate();
         parentFrame.repaint();
+        
+
     }//GEN-LAST:event_DisplayButActionPerformed
 
     private void BundleButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BundleButActionPerformed
@@ -521,6 +572,11 @@ public class ViewCusto extends javax.swing.JPanel {
         parentFrame.setState(JFrame.ICONIFIED);
     }//GEN-LAST:event_Minimize_frontActionPerformed
 
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_searchFieldActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddBut;
@@ -536,19 +592,16 @@ public class ViewCusto extends javax.swing.JPanel {
     private javax.swing.JButton Reports;
     private javax.swing.JButton Resize_front;
     private javax.swing.JButton Returncalc;
-    private javax.swing.JButton ViewCus1;
+    private javax.swing.JButton ViewCus;
     private javax.swing.JScrollPane customerScroll;
-    private javax.swing.JLabel jLabel10;
+    private javax.swing.JTable customerTable;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel4;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
-    private javax.swing.JLabel jLabel8;
-    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
-    private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
+    private javax.swing.JTextField searchField;
     // End of variables declaration//GEN-END:variables
 }
