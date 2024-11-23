@@ -9,6 +9,7 @@ import GUI.Extras.EquipmentDAO;
 import GUI.Extras.Equipment;
 import GUI.Extras.EquipmentCount;
 import GUI.Extras.EquipmentListCellRenderer;
+import GUI.Extras.NonEditableTableModel;
 import GUI.GuiFer;
 import java.util.List;
 import javax.swing.BoxLayout;
@@ -29,7 +30,7 @@ public class Display_Inv extends javax.swing.JPanel {
 
     private GuiFer parentFrame;
     private EquipmentDAO equipmentDAO;
-    private DefaultTableModel tableModel;
+    private NonEditableTableModel tableModel;
     private int currentCategoryID = 1;
     public Display_Inv(GuiFer frame) {
         this.parentFrame = frame;
@@ -136,7 +137,15 @@ public class Display_Inv extends javax.swing.JPanel {
             new String [] {
                 "Equipment Name", "Price", "Availability"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         equipmentScrollPane.setViewportView(equipmentTable);
 
         Editbutton.setBackground(new java.awt.Color(102, 102, 102));
@@ -498,7 +507,7 @@ public class Display_Inv extends javax.swing.JPanel {
     private void postInitComponents() {
         String[] columnNames = {"Name", "Price", "Availability"};
 
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new NonEditableTableModel(columnNames, 0);
 
         equipmentTable.setModel(tableModel);
 

@@ -496,16 +496,9 @@ public class EditEquipment extends javax.swing.JFrame {
         ImageFileTransferHandler handler = (ImageFileTransferHandler) EditPhoto.getTransferHandler();
         byte[] imageBytes = handler != null ? handler.getImageByteArray() : null;
 
-        // Update the database with the new details and adjusted quantity
-        equipmentDAO.updateEquipment(equipmentCount.getName(), name, category, price, description, quantity, imageBytes);
-
-        if (parentPanel != null) {
-            parentPanel.refreshTable();
-        }
-        Notifications notif = new Notifications();
-        notif.setNotificationText("Equipment Edited!");                
-        notif.setVisible(true);
-        dispose();
+        // Show the confirmation JFrame
+        Confirmations confirmationFrame = new Confirmations(equipmentDAO, equipmentCount.getName(), name, category, price, description, quantity, imageBytes);
+        confirmationFrame.setVisible(true);
     }//GEN-LAST:event_DoneButActionPerformed
 
     private void Resize_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Resize_frontActionPerformed

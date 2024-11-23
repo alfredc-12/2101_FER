@@ -15,6 +15,7 @@ import GUI.AdminDashboard.PackageEquip;
 import GUI.Extras.CustomerOrder;
 import GUI.Extras.CustomerOrderDAO;
 import GUI.Extras.EquipmentCount;
+import GUI.Extras.NonEditableTableModel;
 import GUI.GuiFer;
 import java.util.List;
 import javax.swing.JFrame;
@@ -34,7 +35,7 @@ public class ViewCusto extends javax.swing.JPanel {
      */
     private GuiFer parentFrame;
     private Connection connect;
-    private DefaultTableModel tableModel;
+    private NonEditableTableModel tableModel;
     private CustomerOrderDAO customerOrderDAO = new CustomerOrderDAO(); 
     private String currentQuery = "";
     public ViewCusto(GuiFer frame) {
@@ -95,7 +96,15 @@ public class ViewCusto extends javax.swing.JPanel {
             new String [] {
                 "Name", "Email", "Phone", "Address"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         customerScroll.setViewportView(customerTable);
 
         ViewCus.setBackground(new java.awt.Color(51, 51, 51));
@@ -122,28 +131,24 @@ public class ViewCusto extends javax.swing.JPanel {
             EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EmptyPannel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EmptyPannel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
-                        .addComponent(ViewCus)
-                        .addGap(317, 317, 317))
-                    .addGroup(EmptyPannel1Layout.createSequentialGroup()
-                        .addComponent(customerScroll)
-                        .addContainerGap())))
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 176, Short.MAX_VALUE)
+                .addComponent(ViewCus)
+                .addGap(317, 317, 317))
+            .addComponent(customerScroll)
         );
         EmptyPannel1Layout.setVerticalGroup(
             EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EmptyPannel1Layout.createSequentialGroup()
                 .addComponent(customerScroll)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ViewCus)
+                .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addComponent(jLabel1)))
+                        .addComponent(jLabel1))
+                    .addComponent(ViewCus))
                 .addContainerGap())
         );
 
@@ -413,7 +418,7 @@ public class ViewCusto extends javax.swing.JPanel {
     private void postInitComponents() {
         String[] columnNames = {"Name", "Email", "Phone", "Address"};
 
-        tableModel = new DefaultTableModel(columnNames, 0);
+        tableModel = new NonEditableTableModel(columnNames, 0);
 
         customerTable.setModel(tableModel);
 
@@ -467,21 +472,19 @@ public class ViewCusto extends javax.swing.JPanel {
     
     private void ViewCusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ViewCusActionPerformed
         int selectedRow = customerTable.getSelectedRow();
-            if (selectedRow != -1) {
-                // Retrieve data from the selected row
-                String name = (String) tableModel.getValueAt(selectedRow, 0);
-                String email = (String) tableModel.getValueAt(selectedRow, 1);
-                String phone = (String) tableModel.getValueAt(selectedRow, 2);
-                String address = (String) tableModel.getValueAt(selectedRow, 3);
+        if (selectedRow != -1) {
+            // Retrieve data from the selected row
+            String name = (String) customerTable.getValueAt(selectedRow, 0);
+            String email = (String) customerTable.getValueAt(selectedRow, 1);
+            String phone = (String) customerTable.getValueAt(selectedRow, 2);
+            String address = (String) customerTable.getValueAt(selectedRow, 3);
 
-                // Fetch detailed information from the database based on the name
-                CustomerOrder customerOrder = customerOrderDAO.getCustomerOrderByName(name);
+            CustomerOrder customerOrder = customerOrderDAO.getCustomerOrderByName(name);
 
-                // Open and populate the EditCustomer frame
-                viewCustomer editFrame = new viewCustomer(customerOrder, this);
-                editFrame.setVisible(true);
-    }
-
+            // Create and display the orderHistory frame
+            orderHistory orderHistoryFrame = new orderHistory(customerOrder);
+            orderHistoryFrame.setVisible(true);
+        }
     }//GEN-LAST:event_ViewCusActionPerformed
 
     private void DisplayButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisplayButActionPerformed
