@@ -3,21 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package GUI.AdminDashboard;
-import GUI.Extras.Connectosql;
 import GUI.GuiFer;
+import GUI.Extras.Calcs;
 import GUI.Extras.ImageFileTransferHandler;
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Point;
-import java.sql.Connection;
-import java.sql.Statement;
-import java.util.Base64;
-import javax.swing.JOptionPane;
 import javax.swing.*;
-import java.sql.SQLException;
-import javax.swing.border.Border;
-import javax.swing.JPanel;
-import javax.swing.JLabel;
 
 /**
  *
@@ -30,6 +20,7 @@ public class ReturnCalc extends javax.swing.JPanel {
      */
      private GuiFer parentFrame;
     private Point initialClick;
+    
 
     private ImageFileTransferHandler imageFileTransferHandler;
     
@@ -38,6 +29,9 @@ public class ReturnCalc extends javax.swing.JPanel {
         initComponents();
         parentFrame.enablePanelDragging(MainPanelDrag);
         parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        Calcs calcs = new Calcs();
+        calcs.fetchCustomerData(0);
+        
     }
 
     /**
@@ -52,18 +46,10 @@ public class ReturnCalc extends javax.swing.JPanel {
         jPanel1 = new javax.swing.JPanel();
         EmptyPannel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        jPanel12 = new javax.swing.JPanel();
-        jLabel1 = new javax.swing.JLabel();
-        jPanel13 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jPanel14 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jPanel15 = new javax.swing.JPanel();
-        jLabel4 = new javax.swing.JLabel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList<>();
         textField1 = new java.awt.TextField();
         jLabel5 = new javax.swing.JLabel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        calcTable = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel8 = new javax.swing.JLabel();
@@ -107,98 +93,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
         jPanel4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jPanel12.setBackground(new java.awt.Color(102, 102, 102));
-        jPanel12.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-        jPanel12.setForeground(new java.awt.Color(255, 255, 255));
-
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setText("Customer Name");
-
-        javax.swing.GroupLayout jPanel12Layout = new javax.swing.GroupLayout(jPanel12);
-        jPanel12.setLayout(jPanel12Layout);
-        jPanel12Layout.setHorizontalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel12Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1)
-                .addContainerGap())
-        );
-        jPanel12Layout.setVerticalGroup(
-            jPanel12Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        jPanel13.setBackground(new java.awt.Color(102, 102, 102));
-        jPanel13.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setText("Start Date");
-
-        javax.swing.GroupLayout jPanel13Layout = new javax.swing.GroupLayout(jPanel13);
-        jPanel13.setLayout(jPanel13Layout);
-        jPanel13Layout.setHorizontalGroup(
-            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel13Layout.createSequentialGroup()
-                .addContainerGap(27, Short.MAX_VALUE)
-                .addComponent(jLabel2)
-                .addGap(25, 25, 25))
-        );
-        jPanel13Layout.setVerticalGroup(
-            jPanel13Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        jPanel14.setBackground(new java.awt.Color(102, 102, 102));
-        jPanel14.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setText("End Date");
-
-        javax.swing.GroupLayout jPanel14Layout = new javax.swing.GroupLayout(jPanel14);
-        jPanel14.setLayout(jPanel14Layout);
-        jPanel14Layout.setHorizontalGroup(
-            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel14Layout.createSequentialGroup()
-                .addContainerGap(27, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(16, 16, 16))
-        );
-        jPanel14Layout.setVerticalGroup(
-            jPanel14Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel3, javax.swing.GroupLayout.DEFAULT_SIZE, 22, Short.MAX_VALUE)
-        );
-
-        jPanel15.setBackground(new java.awt.Color(102, 102, 102));
-        jPanel15.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Return Status");
-
-        javax.swing.GroupLayout jPanel15Layout = new javax.swing.GroupLayout(jPanel15);
-        jPanel15.setLayout(jPanel15Layout);
-        jPanel15Layout.setHorizontalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel15Layout.createSequentialGroup()
-                .addGap(14, 14, 14)
-                .addComponent(jLabel4)
-                .addContainerGap(14, Short.MAX_VALUE))
-        );
-        jPanel15Layout.setVerticalGroup(
-            jPanel15Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel4, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-
-        jList1.setModel(new javax.swing.AbstractListModel<String>() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public String getElementAt(int i) { return strings[i]; }
-        });
-        jScrollPane1.setViewportView(jList1);
-
         textField1.setBackground(new java.awt.Color(102, 102, 102));
         textField1.setForeground(new java.awt.Color(255, 255, 255));
         textField1.setText("Search");
@@ -206,7 +100,19 @@ public class ReturnCalc extends javax.swing.JPanel {
         jLabel5.setBackground(new java.awt.Color(255, 255, 255));
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-search-25.png")); // NOI18N
+
+        calcTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Customer Name", "Customer StartDate", "Customer EndDate", "Return Status"
+            }
+        ));
+        jScrollPane1.setViewportView(calcTable);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -216,34 +122,19 @@ public class ReturnCalc extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1)
+                        .addContainerGap())
+                    .addGroup(jPanel4Layout.createSequentialGroup()
                         .addComponent(jLabel5)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(textField1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(477, 477, 477))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(jPanel12, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(142, 142, 142)
-                        .addComponent(jPanel13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(120, 120, 120)
-                        .addComponent(jPanel14, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
-                        .addComponent(jPanel15, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 74, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel4Layout.createSequentialGroup()
-                        .addComponent(jScrollPane1)
-                        .addContainerGap())))
+                        .addComponent(textField1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
+                        .addGap(477, 477, 477))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jPanel14, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel13, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel12, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel15, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(18, 18, 18)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jLabel5)
@@ -456,7 +347,7 @@ public class ReturnCalc extends javax.swing.JPanel {
             EmptyPannelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EmptyPannelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 219, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -520,7 +411,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         DisplayBut2.setBackground(new java.awt.Color(153, 153, 153));
         DisplayBut2.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         DisplayBut2.setForeground(new java.awt.Color(255, 255, 255));
-        DisplayBut2.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-show-property-25.png")); // NOI18N
         DisplayBut2.setText("DISPLAY ");
         DisplayBut2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -531,7 +421,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         BundleBut2.setBackground(new java.awt.Color(153, 153, 153));
         BundleBut2.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         BundleBut2.setForeground(new java.awt.Color(255, 255, 255));
-        BundleBut2.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-add-25.png")); // NOI18N
         BundleBut2.setText("BUNDLE ");
         BundleBut2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -542,7 +431,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         CustomerOrderBut2.setBackground(new java.awt.Color(153, 153, 153));
         CustomerOrderBut2.setFont(new java.awt.Font("Segoe UI", 1, 8)); // NOI18N
         CustomerOrderBut2.setForeground(new java.awt.Color(255, 255, 255));
-        CustomerOrderBut2.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-create-order-25.png")); // NOI18N
         CustomerOrderBut2.setText("CUSTOMER ORDER");
         CustomerOrderBut2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -574,7 +462,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         OpenMenu.setBackground(new java.awt.Color(153, 153, 153));
         OpenMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         OpenMenu.setForeground(new java.awt.Color(255, 255, 255));
-        OpenMenu.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-menu-squared-25.png")); // NOI18N
         OpenMenu.setText("OPEN MENU");
         OpenMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -585,7 +472,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         Reports.setBackground(new java.awt.Color(153, 153, 153));
         Reports.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Reports.setForeground(new java.awt.Color(255, 255, 255));
-        Reports.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-report-25.png")); // NOI18N
         Reports.setText("REPORT");
         Reports.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -596,7 +482,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         EditFront.setBackground(new java.awt.Color(153, 153, 153));
         EditFront.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         EditFront.setForeground(new java.awt.Color(255, 255, 255));
-        EditFront.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-edit-25.png")); // NOI18N
         EditFront.setText("EDIT BUNDLE");
         EditFront.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -607,7 +492,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         Returncalc.setBackground(new java.awt.Color(153, 153, 153));
         Returncalc.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Returncalc.setForeground(new java.awt.Color(255, 255, 255));
-        Returncalc.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-return-25.png")); // NOI18N
         Returncalc.setText("RETURN");
         Returncalc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -618,7 +502,6 @@ public class ReturnCalc extends javax.swing.JPanel {
         AddBut.setBackground(new java.awt.Color(153, 153, 153));
         AddBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         AddBut.setForeground(new java.awt.Color(255, 255, 255));
-        AddBut.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-add-25.png")); // NOI18N
         AddBut.setText("ADD   ");
         AddBut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -855,12 +738,9 @@ public class ReturnCalc extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddBut;
-    private javax.swing.JButton BundleBut1;
     private javax.swing.JButton BundleBut2;
     private javax.swing.JLabel Calculation;
-    private javax.swing.JButton CustomerOrderBut1;
     private javax.swing.JButton CustomerOrderBut2;
-    private javax.swing.JButton DisplayBut1;
     private javax.swing.JButton DisplayBut2;
     private javax.swing.JButton EditFront;
     private javax.swing.JPanel EmptyPannel;
@@ -874,30 +754,19 @@ public class ReturnCalc extends javax.swing.JPanel {
     private javax.swing.JButton ReturnButton;
     private javax.swing.JLabel ReturnDate;
     private javax.swing.JButton Returncalc;
+    private javax.swing.JTable calcTable;
     private javax.swing.JLabel equipmentName;
-    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel14;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel8;
     private javax.swing.JLabel jLabel9;
-    private javax.swing.JList<String> jList1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel11;
-    private javax.swing.JPanel jPanel12;
-    private javax.swing.JPanel jPanel13;
-    private javax.swing.JPanel jPanel14;
-    private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
     private javax.swing.JPanel jPanel17;
-    private javax.swing.JPanel jPanel18;
-    private javax.swing.JPanel jPanel19;
     private javax.swing.JPanel jPanel20;
     private javax.swing.JPanel jPanel21;
     private javax.swing.JPanel jPanel22;

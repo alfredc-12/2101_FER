@@ -263,8 +263,8 @@ public class EditBundle extends javax.swing.JPanel {
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                .addGap(0, 31, Short.MAX_VALUE)
-                .addComponent(PackImg, javax.swing.GroupLayout.PREFERRED_SIZE, 78, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(PackImg, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
         jPanel6.setBackground(new java.awt.Color(102, 102, 102));
@@ -447,7 +447,6 @@ public class EditBundle extends javax.swing.JPanel {
         DisplayBut1.setBackground(new java.awt.Color(153, 153, 153));
         DisplayBut1.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         DisplayBut1.setForeground(new java.awt.Color(255, 255, 255));
-        DisplayBut1.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-show-property-25.png")); // NOI18N
         DisplayBut1.setText("DISPLAY ");
         DisplayBut1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -458,7 +457,6 @@ public class EditBundle extends javax.swing.JPanel {
         BundleBut1.setBackground(new java.awt.Color(153, 153, 153));
         BundleBut1.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         BundleBut1.setForeground(new java.awt.Color(255, 255, 255));
-        BundleBut1.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-add-25.png")); // NOI18N
         BundleBut1.setText("BUNDLE ");
         BundleBut1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -469,7 +467,6 @@ public class EditBundle extends javax.swing.JPanel {
         CustomerOrderBut1.setBackground(new java.awt.Color(153, 153, 153));
         CustomerOrderBut1.setFont(new java.awt.Font("Segoe UI", 1, 8)); // NOI18N
         CustomerOrderBut1.setForeground(new java.awt.Color(255, 255, 255));
-        CustomerOrderBut1.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-create-order-25.png")); // NOI18N
         CustomerOrderBut1.setText("CUSTOMER ORDER");
         CustomerOrderBut1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -501,7 +498,6 @@ public class EditBundle extends javax.swing.JPanel {
         OpenMenu.setBackground(new java.awt.Color(153, 153, 153));
         OpenMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         OpenMenu.setForeground(new java.awt.Color(255, 255, 255));
-        OpenMenu.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-menu-squared-25.png")); // NOI18N
         OpenMenu.setText("OPEN MENU");
         OpenMenu.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -512,7 +508,6 @@ public class EditBundle extends javax.swing.JPanel {
         Reports.setBackground(new java.awt.Color(153, 153, 153));
         Reports.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Reports.setForeground(new java.awt.Color(255, 255, 255));
-        Reports.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-report-25.png")); // NOI18N
         Reports.setText("REPORT");
         Reports.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -523,7 +518,6 @@ public class EditBundle extends javax.swing.JPanel {
         EditFront.setBackground(new java.awt.Color(153, 153, 153));
         EditFront.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         EditFront.setForeground(new java.awt.Color(255, 255, 255));
-        EditFront.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-edit-25.png")); // NOI18N
         EditFront.setText("EDIT BUNDLE");
         EditFront.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -534,7 +528,6 @@ public class EditBundle extends javax.swing.JPanel {
         Returncalc.setBackground(new java.awt.Color(153, 153, 153));
         Returncalc.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Returncalc.setForeground(new java.awt.Color(255, 255, 255));
-        Returncalc.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-return-25.png")); // NOI18N
         Returncalc.setText("RETURN");
         Returncalc.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -545,7 +538,6 @@ public class EditBundle extends javax.swing.JPanel {
         AddBut.setBackground(new java.awt.Color(153, 153, 153));
         AddBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         AddBut.setForeground(new java.awt.Color(255, 255, 255));
-        AddBut.setIcon(new javax.swing.ImageIcon("C:\\Users\\leyzu\\OneDrive\\Desktop\\Fer_Final2024\\2101_FER\\FerProject2\\icons\\icons8-add-25.png")); // NOI18N
         AddBut.setText("ADD   ");
         AddBut.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -838,14 +830,11 @@ public class EditBundle extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddBut;
-    private javax.swing.JButton BundleBut;
     private javax.swing.JButton BundleBut1;
-    private javax.swing.JButton CustomerOrderBut;
     private javax.swing.JButton CustomerOrderBut1;
     private javax.swing.JLabel DESC;
     private javax.swing.JButton Delete;
     private javax.swing.JLabel Description;
-    private javax.swing.JButton DisplayBut;
     private javax.swing.JButton DisplayBut1;
     private javax.swing.JButton EditFront;
     private javax.swing.JPanel EmptyPannel;
@@ -870,7 +859,6 @@ public class EditBundle extends javax.swing.JPanel {
     private javax.swing.JButton Returncalc;
     private javax.swing.JButton UpdatePkg;
     private javax.swing.JLabel jLabel10;
-    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
     private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
@@ -886,12 +874,10 @@ public class EditBundle extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel14;
     private javax.swing.JPanel jPanel15;
     private javax.swing.JPanel jPanel16;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JPanel jPanel5;
     private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel9;
     // End of variables declaration//GEN-END:variables
 }
