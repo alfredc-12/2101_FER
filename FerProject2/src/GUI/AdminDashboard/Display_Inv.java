@@ -146,6 +146,7 @@ public class Display_Inv extends javax.swing.JPanel {
                 return canEdit [columnIndex];
             }
         });
+        equipmentTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         equipmentScrollPane.setViewportView(equipmentTable);
 
         Editbutton.setBackground(new java.awt.Color(102, 102, 102));
@@ -505,7 +506,7 @@ public class Display_Inv extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void postInitComponents() {
-        String[] columnNames = {"Name", "Price", "Availability"};
+        String[] columnNames = {"Name", "Rented Price", "Availability"};
 
         tableModel = new NonEditableTableModel(columnNames, 0);
 

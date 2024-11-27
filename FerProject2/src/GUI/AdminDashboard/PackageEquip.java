@@ -4,9 +4,24 @@
  */
 package GUI.AdminDashboard;
 
-import GUI.AdminDashboard.Main_Menu;
+import GUI.Extras.EquipmentCount;
+import GUI.Extras.EquipmentDAO;
+import GUI.Extras.ImageFileTransferHandler;
+import GUI.Extras.NonEditableTableModel;
+import GUI.Extras.PackageDAO;
 import GUI.GuiFer;
+import java.awt.BorderLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -18,10 +33,22 @@ public class PackageEquip extends javax.swing.JPanel {
      * Creates new form PackageEquip
      */
     private GuiFer parentFrame;
+    private EquipmentDAO equipmentDAO;
+    private NonEditableTableModel equipmentTableModel;
+    private NonEditableTableModel selectTableModel;
+    private int currentCategoryID = 1;
+    private Map<String, Integer> originalStock = new HashMap<>();
+    private Map<String, Integer> availableStock = new HashMap<>();
+    private ImageFileTransferHandler imageFileTransferHandler;
+    
     public PackageEquip(GuiFer frame) {
         this.parentFrame = frame;
+        equipmentDAO = new EquipmentDAO();
         initComponents();
         parentFrame.enablePanelDragging(MainPanelDrag);
+        postInitComponents();
+        loadEquipment(currentCategoryID);
+
         parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
@@ -38,22 +65,28 @@ public class PackageEquip extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        PackageName = new java.awt.TextField();
-        PackagePrice = new java.awt.TextField();
+        packageNameText = new javax.swing.JTextField();
+        rentedPrice = new javax.swing.JTextField();
+        jLabel8 = new javax.swing.JLabel();
+        jLabel9 = new javax.swing.JLabel();
+        imagePanel = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        descBox = new javax.swing.JTextArea();
         EmptyPannel = new javax.swing.JPanel();
         jPanel4 = new javax.swing.JPanel();
-        jPanel5 = new javax.swing.JPanel();
+        equipmentScroll = new javax.swing.JScrollPane();
+        equipmentTable = new javax.swing.JTable();
         jLabel1 = new javax.swing.JLabel();
-        jPanel6 = new javax.swing.JPanel();
-        jLabel2 = new javax.swing.JLabel();
-        jPanel7 = new javax.swing.JPanel();
-        jLabel3 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        CreateBut = new javax.swing.JButton();
+        searchField = new javax.swing.JTextField();
         AudioBut = new javax.swing.JButton();
         MisceBut = new javax.swing.JButton();
         LightBut = new javax.swing.JButton();
         CameraBut = new javax.swing.JButton();
+        CreateBut = new javax.swing.JButton();
+        jPanel10 = new javax.swing.JPanel();
+        selectScroll = new javax.swing.JScrollPane();
+        selectTable = new javax.swing.JTable();
+        jLabel7 = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         DisplayBut = new javax.swing.JButton();
         BundleBut = new javax.swing.JButton();
@@ -84,43 +117,103 @@ public class PackageEquip extends javax.swing.JPanel {
 
         jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel5.setText("Package Price");
+        jLabel5.setText("Rented Price / day");
 
-        PackageName.setBackground(new java.awt.Color(51, 51, 51));
-        PackageName.setForeground(new java.awt.Color(255, 255, 255));
+        packageNameText.setBackground(new java.awt.Color(51, 51, 51));
+        packageNameText.setForeground(new java.awt.Color(255, 255, 255));
+        packageNameText.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                packageNameTextActionPerformed(evt);
+            }
+        });
 
-        PackagePrice.setBackground(new java.awt.Color(51, 51, 51));
-        PackagePrice.setForeground(new java.awt.Color(255, 255, 255));
+        rentedPrice.setBackground(new java.awt.Color(51, 51, 51));
+        rentedPrice.setForeground(new java.awt.Color(255, 255, 255));
+        rentedPrice.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rentedPriceActionPerformed(evt);
+            }
+        });
+
+        jLabel8.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel8.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel8.setText("Package Description");
+
+        jLabel9.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel9.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel9.setText("Package Image");
+
+        imagePanel.setBackground(new java.awt.Color(51, 51, 51));
+        imagePanel.setLayout(new java.awt.BorderLayout());
+
+        descBox.setBackground(new java.awt.Color(51, 51, 51));
+        descBox.setColumns(20);
+        descBox.setForeground(new java.awt.Color(255, 255, 255));
+        descBox.setLineWrap(true);
+        descBox.setRows(5);
+        descBox.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(descBox);
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(62, 62, 62)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(PackagePrice, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGap(208, 208, 208)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jScrollPane1))
+                            .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel3Layout.createSequentialGroup()
+                                .addGap(17, 17, 17)
+                                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel5, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                        .addComponent(rentedPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addGroup(jPanel3Layout.createSequentialGroup()
+                                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(packageNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 403, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                        .addGap(4, 4, 4)))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 112, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(PackageName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                .addContainerGap())
+                        .addGap(119, 119, 119)
+                        .addComponent(jLabel9)
+                        .addGap(114, 114, 114))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                        .addComponent(imagePanel, javax.swing.GroupLayout.PREFERRED_SIZE, 330, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel4)
-                    .addComponent(PackageName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jLabel5)
-                    .addComponent(PackagePrice, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(26, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(8, 8, 8)
+                        .addComponent(jLabel4)
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(12, 12, 12)
+                        .addComponent(packageNameText, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel5)
+                            .addComponent(rentedPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(jLabel8)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(imagePanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addContainerGap())
         );
 
         EmptyPannel.setBackground(new java.awt.Color(102, 102, 102));
@@ -129,108 +222,49 @@ public class PackageEquip extends javax.swing.JPanel {
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
         jPanel4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jPanel5.setBackground(new java.awt.Color(102, 102, 102));
+        equipmentScroll.setBackground(new java.awt.Color(102, 102, 102));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("NAME");
+        equipmentTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Equipment Name", "Stock"
+            }
+        ));
+        equipmentScroll.setViewportView(equipmentTable);
 
-        javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
-        jPanel5.setLayout(jPanel5Layout);
-        jPanel5Layout.setHorizontalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel5Layout.createSequentialGroup()
-                .addGap(93, 93, 93)
-                .addComponent(jLabel1)
-                .addContainerGap(97, Short.MAX_VALUE))
-        );
-        jPanel5Layout.setVerticalGroup(
-            jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel1, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
+        jLabel1.setText("Search");
 
-        jPanel6.setBackground(new java.awt.Color(102, 102, 102));
-
-        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel2.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel2.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel2.setText("CATEGORY");
-
-        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
-        jPanel6.setLayout(jPanel6Layout);
-        jPanel6Layout.setHorizontalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(146, 146, 146))
-        );
-        jPanel6Layout.setVerticalGroup(
-            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel2, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
-
-        jPanel7.setBackground(new java.awt.Color(102, 102, 102));
-
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jLabel3.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel3.setText("PRICE");
-
-        javax.swing.GroupLayout jPanel7Layout = new javax.swing.GroupLayout(jPanel7);
-        jPanel7.setLayout(jPanel7Layout);
-        jPanel7Layout.setHorizontalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(73, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(58, 58, 58))
-        );
-        jPanel7Layout.setVerticalGroup(
-            jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.TRAILING)
-        );
-
-        jScrollPane2.setBackground(new java.awt.Color(102, 102, 102));
-
-        CreateBut.setBackground(new java.awt.Color(102, 102, 102));
-        CreateBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        CreateBut.setForeground(new java.awt.Color(255, 255, 255));
-        CreateBut.setText("CREATE");
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(353, 353, 353)
-                .addComponent(CreateBut)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addComponent(equipmentScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 607, Short.MAX_VALUE)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING))
-                .addContainerGap())
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, 241, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jPanel6, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(CreateBut)
+                .addComponent(equipmentScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 281, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1))
                 .addContainerGap())
         );
 
@@ -250,6 +284,11 @@ public class PackageEquip extends javax.swing.JPanel {
         MisceBut.setForeground(new java.awt.Color(255, 255, 255));
         MisceBut.setText("MISCELLANEOUS");
         MisceBut.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        MisceBut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MisceButActionPerformed(evt);
+            }
+        });
 
         LightBut.setBackground(new java.awt.Color(51, 51, 51));
         LightBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
@@ -267,37 +306,101 @@ public class PackageEquip extends javax.swing.JPanel {
         CameraBut.setForeground(new java.awt.Color(255, 255, 255));
         CameraBut.setText("CAMERA");
         CameraBut.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        CameraBut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CameraButActionPerformed(evt);
+            }
+        });
+
+        CreateBut.setBackground(new java.awt.Color(0, 0, 0));
+        CreateBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        CreateBut.setForeground(new java.awt.Color(102, 102, 102));
+        CreateBut.setText("CREATE");
+        CreateBut.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                CreateButActionPerformed(evt);
+            }
+        });
+
+        jPanel10.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel10.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
+
+        selectScroll.setBackground(new java.awt.Color(102, 102, 102));
+
+        selectTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null},
+                {null, null},
+                {null, null},
+                {null, null}
+            },
+            new String [] {
+                "Equipment Name", "Category"
+            }
+        ));
+        selectScroll.setViewportView(selectTable);
+
+        javax.swing.GroupLayout jPanel10Layout = new javax.swing.GroupLayout(jPanel10);
+        jPanel10.setLayout(jPanel10Layout);
+        jPanel10Layout.setHorizontalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(selectScroll, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+        );
+        jPanel10Layout.setVerticalGroup(
+            jPanel10Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(selectScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 283, Short.MAX_VALUE)
+        );
+
+        jLabel7.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jLabel7.setForeground(new java.awt.Color(255, 255, 255));
+        jLabel7.setText("Selected Items");
 
         javax.swing.GroupLayout EmptyPannelLayout = new javax.swing.GroupLayout(EmptyPannel);
         EmptyPannel.setLayout(EmptyPannelLayout);
         EmptyPannelLayout.setHorizontalGroup(
             EmptyPannelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EmptyPannelLayout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addContainerGap())
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EmptyPannelLayout.createSequentialGroup()
-                .addContainerGap(145, Short.MAX_VALUE)
+                .addGap(15, 15, 15)
                 .addComponent(CameraBut, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(LightBut, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(AudioBut, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(MisceBut, javax.swing.GroupLayout.PREFERRED_SIZE, 144, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(131, 131, 131))
+                .addGap(100, 100, 100)
+                .addComponent(jLabel7)
+                .addGap(0, 0, Short.MAX_VALUE))
+            .addGroup(EmptyPannelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(EmptyPannelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(EmptyPannelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jPanel10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addContainerGap())
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, EmptyPannelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(CreateBut)
+                        .addGap(109, 109, 109))))
         );
         EmptyPannelLayout.setVerticalGroup(
             EmptyPannelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EmptyPannelLayout.createSequentialGroup()
-                .addContainerGap()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(EmptyPannelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(CameraBut)
                     .addComponent(LightBut)
                     .addComponent(AudioBut)
-                    .addComponent(MisceBut))
+                    .addComponent(MisceBut)
+                    .addComponent(jLabel7))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(EmptyPannelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(EmptyPannelLayout.createSequentialGroup()
+                        .addComponent(jPanel10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(CreateBut))
+                    .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -400,7 +503,7 @@ public class PackageEquip extends javax.swing.JPanel {
         EditFront.setBackground(new java.awt.Color(153, 153, 153));
         EditFront.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         EditFront.setForeground(new java.awt.Color(255, 255, 255));
-        EditFront.setText("EDIT CUSTOMER");
+        EditFront.setText("EDIT PACKAGE");
         EditFront.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 EditFrontActionPerformed(evt);
@@ -465,7 +568,7 @@ public class PackageEquip extends javax.swing.JPanel {
                 .addComponent(BundleBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(CustomerOrderBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 26, Short.MAX_VALUE)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -536,11 +639,11 @@ public class PackageEquip extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(EmptyPannel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap())
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(MainPanelDrag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -550,9 +653,9 @@ public class PackageEquip extends javax.swing.JPanel {
                 .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(EmptyPannel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(EmptyPannel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
@@ -569,12 +672,141 @@ public class PackageEquip extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
     
+    private void postInitComponents() {
+        String[] equipmentColumnNames = {"Name", "Stock"};
+        String[] selectColumnNames = {"Name"};
+
+        equipmentTableModel = new NonEditableTableModel(equipmentColumnNames, 0);
+        selectTableModel = new NonEditableTableModel(selectColumnNames, 0);
+
+        equipmentTable.setModel(equipmentTableModel);
+        equipmentScroll.setViewportView(equipmentTable);
+
+        selectTable.setModel(selectTableModel);
+        selectScroll.setViewportView(selectTable);
+
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable();
+            }
+        });
+
+        equipmentTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int selectedRow = equipmentTable.getSelectedRow();
+                    if (selectedRow != -1) {
+                        String equipmentName = equipmentTableModel.getValueAt(selectedRow, 0).toString();
+                        int stock = availableStock.get(equipmentName);
+                        if (stock > 0) {
+                            addEquipmentToSelectTable(equipmentName);
+                            availableStock.put(equipmentName, stock - 1);
+                            equipmentTableModel.setValueAt(stock - 1, selectedRow, 1);
+                        } else {
+                            JOptionPane.showMessageDialog(parentFrame, "No stock available for " + equipmentName, "Out of Stock", JOptionPane.WARNING_MESSAGE);
+                        }
+                    }
+                }
+            }
+        });
+
+        selectTable.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    int selectedRow = selectTable.getSelectedRow();
+                    if (selectedRow != -1) {
+                        String equipmentName = selectTableModel.getValueAt(selectedRow, 0).toString();
+                        removeEquipmentFromSelectTable(selectedRow);
+                        increaseStockInEquipmentTable(equipmentName);
+                    }
+                }
+            }
+        });
+        imageFileTransferHandler = new ImageFileTransferHandler(imagePanel);
+        imagePanel.setTransferHandler(imageFileTransferHandler);
+        imagePanel.setLayout(new BorderLayout());
+    }
+
+    public void loadEquipment(int categoryID) {
+        currentCategoryID = categoryID;
+        equipmentTableModel.setRowCount(0);
+        List<EquipmentCount> equipmentCounts = equipmentDAO.getEquipmentCountByCategory(categoryID);
+
+        for (EquipmentCount equipmentCount : equipmentCounts) {
+            String name = equipmentCount.getName();
+            int totalStock = equipmentCount.getTotalCount();
+            originalStock.putIfAbsent(name, totalStock);
+            availableStock.putIfAbsent(name, totalStock);
+            equipmentTableModel.addRow(new Object[]{name, availableStock.get(name)});
+        }
+    }
+
+    private void filterTable() {
+        String query = searchField.getText().toLowerCase();
+        equipmentTableModel.setRowCount(0);
+
+        List<EquipmentCount> equipmentCounts = equipmentDAO.getEquipmentCountByCategory(currentCategoryID);
+        for (EquipmentCount equipmentCount : equipmentCounts) {
+            if (equipmentCount.getName().toLowerCase().contains(query)) {
+                Object[] rowData = {
+                    equipmentCount.getName(),
+                    availableStock.get(equipmentCount.getName())
+                };
+                equipmentTableModel.addRow(rowData);
+            }
+        }
+    }
+
+    public void refreshTable() {
+        loadEquipment(currentCategoryID);
+    }
+
+    private void addEquipmentToSelectTable(String equipmentName) {
+        Object[] rowData = { equipmentName };
+        selectTableModel.addRow(rowData);
+    }
+
+    private void removeEquipmentFromSelectTable(int rowIndex) {
+        String equipmentName = selectTableModel.getValueAt(rowIndex, 0).toString();
+        selectTableModel.removeRow(rowIndex);
+        increaseStockInEquipmentTable(equipmentName);
+    }
+
+    private void increaseStockInEquipmentTable(String equipmentName) {
+        int originalStockCount = originalStock.get(equipmentName);
+        int availableStockCount = availableStock.get(equipmentName);
+        if (availableStockCount < originalStockCount) {
+            availableStock.put(equipmentName, availableStockCount + 1);
+            for (int i = 0; i < equipmentTableModel.getRowCount(); i++) {
+                if (equipmentTableModel.getValueAt(i, 0).toString().equals(equipmentName)) {
+                    equipmentTableModel.setValueAt(availableStockCount + 1, i, 1);
+                    break;
+                }
+            }
+        }
+    }
+    
     private void AudioButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AudioButActionPerformed
         // TODO add your handling code here:
+        loadEquipment(3);
     }//GEN-LAST:event_AudioButActionPerformed
 
     private void LightButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LightButActionPerformed
         // TODO add your handling code here:
+        loadEquipment(2);
     }//GEN-LAST:event_LightButActionPerformed
 
     private void DisplayButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_DisplayButActionPerformed
@@ -664,6 +896,90 @@ public class PackageEquip extends javax.swing.JPanel {
         parentFrame.setState(JFrame.ICONIFIED);
     }//GEN-LAST:event_Minimize_frontActionPerformed
 
+    private void packageNameTextActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_packageNameTextActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_packageNameTextActionPerformed
+
+    private void rentedPriceActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rentedPriceActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_rentedPriceActionPerformed
+
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_searchFieldActionPerformed
+
+    private void MisceButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MisceButActionPerformed
+        // TODO add your handling code here:
+        loadEquipment(4);
+    }//GEN-LAST:event_MisceButActionPerformed
+
+    private void CameraButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CameraButActionPerformed
+        // TODO add your handling code here:
+        loadEquipment(1);
+    }//GEN-LAST:event_CameraButActionPerformed
+
+    private void CreateButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CreateButActionPerformed
+        // Get the package information
+        String packageName = packageNameText.getText().trim();
+        String rentedPriceStr = rentedPrice.getText().trim();
+        String packageDesc = descBox.getText().trim();
+        byte[] packageImage = imageFileTransferHandler.getImageByteArray();
+
+        // Validate input
+        if (packageName.isEmpty() || rentedPriceStr.isEmpty() || packageDesc.isEmpty() || packageImage == null) {
+            JOptionPane.showMessageDialog(parentFrame, "Please fill in all fields and upload an image.", "Missing Information", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        double rentedPriceValue;
+        try {
+            rentedPriceValue = Double.parseDouble(rentedPriceStr);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(parentFrame, "Invalid rented price. Please enter a valid number.", "Invalid Input", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Insert the package information into the package table
+        PackageDAO packageDAO = new PackageDAO();
+        int packageID = packageDAO.insertPackage(packageName, rentedPriceValue, packageDesc, packageImage);
+
+        if (packageID > 0) {
+            // Retrieve the selected equipment from the selectTable
+            DefaultTableModel model = (DefaultTableModel) selectTable.getModel();
+            List<Integer> equipmentIDs = new ArrayList<>();
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String equipmentName = (String) model.getValueAt(i, 0);
+                int equipmentID = equipmentDAO.getEquipmentIDByName(equipmentName); // Assuming you have this method in EquipmentDAO
+                equipmentIDs.add(equipmentID);
+            }
+
+            // Insert the package equipment information into the packageequipment table
+            for (int equipmentID : equipmentIDs) {
+                packageDAO.insertPackageEquipment(packageID, equipmentID);
+            }
+
+            // Show success message
+            JOptionPane.showMessageDialog(parentFrame, "Package created successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+            // Reset the input fields and tables
+            packageNameText.setText("");
+            rentedPrice.setText(""); // Reset rentedPriceTextField to empty string
+            descBox.setText("");
+            imageFileTransferHandler = new ImageFileTransferHandler(imagePanel);
+            imagePanel.setTransferHandler(imageFileTransferHandler);
+            imagePanel.removeAll();
+            imagePanel.revalidate();
+            imagePanel.repaint(); // Clear the image byte array
+            model.setRowCount(0); // Clear the selectTable
+            refreshTable(); // Refresh the equipmentTable to reset stock values
+
+        } else {
+            JOptionPane.showMessageDialog(parentFrame, "Failed to create package.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_CreateButActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddBut;
@@ -681,27 +997,33 @@ public class PackageEquip extends javax.swing.JPanel {
     private javax.swing.JButton Minimize_front;
     private javax.swing.JButton MisceBut;
     private javax.swing.JButton OpenMenu;
-    private java.awt.TextField PackageName;
-    private java.awt.TextField PackagePrice;
     private javax.swing.JButton Reports;
     private javax.swing.JButton Resize_front;
     private javax.swing.JButton Returncalc;
+    private javax.swing.JTextArea descBox;
+    private javax.swing.JScrollPane equipmentScroll;
+    private javax.swing.JTable equipmentTable;
+    private javax.swing.JPanel imagePanel;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel11;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel10;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
-    private javax.swing.JPanel jPanel5;
-    private javax.swing.JPanel jPanel6;
-    private javax.swing.JPanel jPanel7;
     private javax.swing.JPanel jPanel8;
     private javax.swing.JPanel jPanel9;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextField packageNameText;
+    private javax.swing.JTextField rentedPrice;
+    private javax.swing.JTextField searchField;
+    private javax.swing.JScrollPane selectScroll;
+    private javax.swing.JTable selectTable;
     // End of variables declaration//GEN-END:variables
 }

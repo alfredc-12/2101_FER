@@ -4,25 +4,18 @@
  */
 package GUI.AdminDashboard;
 
-import java.sql.*;
 import java.sql.Connection;
-import java.sql.Statement;
-import java.sql.SQLException;
 import GUI.AdminDashboard.Display_Inv;
-import GUI.AdminDashboard.Main_Menu;
 import GUI.AdminDashboard.Main_Menu;
 import GUI.AdminDashboard.PackageEquip;
 import GUI.Extras.CustomerOrder;
 import GUI.Extras.CustomerOrderDAO;
-import GUI.Extras.EquipmentCount;
 import GUI.Extras.NonEditableTableModel;
 import GUI.GuiFer;
 import java.util.List;
 import javax.swing.JFrame;
-import javax.swing.JTable;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -142,7 +135,7 @@ public class ViewCusto extends javax.swing.JPanel {
         EmptyPannel1Layout.setVerticalGroup(
             EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(EmptyPannel1Layout.createSequentialGroup()
-                .addComponent(customerScroll)
+                .addComponent(customerScroll, javax.swing.GroupLayout.DEFAULT_SIZE, 542, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(EmptyPannel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)

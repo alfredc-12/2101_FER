@@ -25,10 +25,8 @@ import javax.swing.border.Border;
 public class Main_Menu extends javax.swing.JPanel {
     
     private GuiFer parentFrame;
-    private Point initialClick;
 
     private ImageFileTransferHandler imageFileTransferHandler;
-    private Connection connect;
     
     public Main_Menu(GuiFer frame) {
         this.parentFrame = frame;
@@ -639,7 +637,7 @@ public class Main_Menu extends javax.swing.JPanel {
         String Simage = Base64.getEncoder().encodeToString(image);
         
         int counts = 1;
-        
+                
         if (equipName.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Equipment Name is REQUIRED");
         } else if (category.isEmpty()) {
@@ -662,7 +660,7 @@ public class Main_Menu extends javax.swing.JPanel {
             try (Connection connect = Connectosql.getInstance().getConnection();
                  Statement stmt = connect.createStatement()) {
 
-                String query = "INSERT INTO equipment (EquipmentID, EquipmentName, EquipmentCategoryID, EquipmentPrice, EquipmentDesc, EquipmentImage, EquipmentAvailability) " +
+                String query = "INSERT INTO equipment (EquipmentID, EquipmentName, EquipmentCategoryID, RentedPrice, EquipmentDesc, EquipmentImage, EquipmentAvailability) " +
                         "VALUES (NULL, '" + equipName + "', '" + equipID + "', '" + PriceBox + "', '" + desc + "', '" + Simage + "', true)";
                 while (counts <= equipQuan){
                     stmt.execute(query);

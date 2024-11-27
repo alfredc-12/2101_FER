@@ -490,16 +490,7 @@ public class orderHistory extends javax.swing.JFrame {
         String newAddress = custAdd.getText();
         
         boolean updated = customerOrderDAO.updateCustomerInfo(customerOrder.getUserId(), newName, newEmail, newPhone, newAddress);
-
-        if (updated) {
-            // Optionally show a confirmation message
-            System.out.println("Customer info updated successfully.");
-        } else {
-            // Optionally show an error message
-            System.out.println("Failed to update customer info.");
-        }
         dispose();
-
     }//GEN-LAST:event_DoneButActionPerformed
 
     /**

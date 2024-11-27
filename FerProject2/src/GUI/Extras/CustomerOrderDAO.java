@@ -132,4 +132,20 @@ public class CustomerOrderDAO {
         }
         return false;
     }
+    
+    public boolean deleteCustomer(int userId) {
+        String query = "DELETE FROM userlist WHERE UserID = ?";
+
+        try (Connection conn = Connectosql.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(query)) {
+
+            stmt.setInt(1, userId);
+
+            int affectedRows = stmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
