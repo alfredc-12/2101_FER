@@ -529,15 +529,42 @@ public class ViewCusto extends javax.swing.JPanel {
     }//GEN-LAST:event_OpenMenuActionPerformed
 
     private void ReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReportsActionPerformed
-        // TODO add your handling code here:
+        GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        Reports rep = new Reports(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(rep);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_ReportsActionPerformed
 
     private void EditFrontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditFrontActionPerformed
-        // TODO add your handling code here:
+GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        EditBundle edit = new EditBundle(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(edit);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_EditFrontActionPerformed
 
     private void ReturncalcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReturncalcActionPerformed
-        // TODO add your handling code here:
+GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        ReturnCalc calc = new ReturnCalc(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(calc);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_ReturncalcActionPerformed
 
     private void AddButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButActionPerformed

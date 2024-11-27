@@ -3,6 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package GUI.AdminDashboard;
+import java.sql.Connection;
+import GUI.AdminDashboard.Display_Inv;
+import GUI.AdminDashboard.Main_Menu;
+import GUI.AdminDashboard.PackageEquip;
+import GUI.Extras.CustomerOrder;
+import GUI.Extras.CustomerOrderDAO;
+import GUI.Extras.ImageFileTransferHandler;
+import GUI.Extras.NonEditableTableModel;
+import GUI.GuiFer;
+import java.awt.Point;
+import java.util.List;
+import javax.swing.JFrame;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 
 /**
  *
@@ -13,8 +27,14 @@ public class Reports extends javax.swing.JPanel {
     /**
      * Creates new form Reports
      */
-    public Reports() {
+     private GuiFer parentFrame;
+    private Point initialClick;
+    
+    public Reports (GuiFer frame) {
+        this.parentFrame = frame;
         initComponents();
+        parentFrame.enablePanelDragging(MainPanelDrag);
+        parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
     /**
@@ -540,16 +560,41 @@ public class Reports extends javax.swing.JPanel {
     }//GEN-LAST:event_OpenMenuActionPerformed
 
     private void ReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReportsActionPerformed
-        // TODO add your handling code here:
+        GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        Reports rep = new Reports(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(rep);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_ReportsActionPerformed
 
     private void EditFrontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditFrontActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_EditFrontActionPerformed
+GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        EditBundle Edit = new EditBundle(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(Edit);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();    }//GEN-LAST:event_EditFrontActionPerformed
 
     private void ReturncalcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReturncalcActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ReturncalcActionPerformed
+GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        ReturnCalc calc = new ReturnCalc(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(calc);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();    }//GEN-LAST:event_ReturncalcActionPerformed
 
     private void AddButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButActionPerformed
         // TODO add your handling code here:
