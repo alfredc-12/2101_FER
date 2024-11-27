@@ -77,7 +77,8 @@ public class Confirmations extends javax.swing.JFrame {
         Confirmation.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         Confirmation.setText("Confirm Update");
 
-        Confirm.setBackground(new java.awt.Color(0, 0, 0));
+        Confirm.setBackground(new java.awt.Color(51, 51, 51));
+        Confirm.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Confirm.setForeground(new java.awt.Color(255, 255, 255));
         Confirm.setText("Confirm");
         Confirm.addActionListener(new java.awt.event.ActionListener() {
@@ -86,7 +87,8 @@ public class Confirmations extends javax.swing.JFrame {
             }
         });
 
-        Cancel.setBackground(new java.awt.Color(0, 0, 0));
+        Cancel.setBackground(new java.awt.Color(51, 51, 51));
+        Cancel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Cancel.setForeground(new java.awt.Color(255, 255, 255));
         Cancel.setText("Cancel");
         Cancel.addActionListener(new java.awt.event.ActionListener() {
