@@ -493,18 +493,10 @@ public class Cart extends javax.swing.JPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton Checkout;
-    private javax.swing.JButton Exit_front;
-    private javax.swing.JButton Exit_front1;
     private javax.swing.JButton Exit_front2;
-    private javax.swing.JPanel MainPanelDrag;
-    private javax.swing.JPanel MainPanelDrag1;
     private javax.swing.JPanel MainPanelDrag2;
-    private javax.swing.JButton Minimize_front;
-    private javax.swing.JButton Minimize_front1;
     private javax.swing.JButton Minimize_front2;
     private javax.swing.JComboBox<String> PaymentMethod;
-    private javax.swing.JButton Resize_front;
-    private javax.swing.JButton Resize_front1;
     private javax.swing.JButton backBut;
     private javax.swing.JTextField dateEditor;
     private javax.swing.JTextField dateEditor2;
