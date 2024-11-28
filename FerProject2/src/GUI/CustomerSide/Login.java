@@ -79,7 +79,7 @@ public class Login extends javax.swing.JFrame {
 
         Email.setBackground(new java.awt.Color(51, 51, 51));
         Email.setCursor(new java.awt.Cursor(java.awt.Cursor.TEXT_CURSOR));
-        Email.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        Email.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         Email.setForeground(new java.awt.Color(255, 255, 255));
         Email.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -106,7 +106,7 @@ public class Login extends javax.swing.JFrame {
             }
         });
 
-        SignUp.setBackground(new java.awt.Color(0, 0, 0));
+        SignUp.setBackground(new java.awt.Color(51, 51, 51));
         SignUp.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         SignUp.setForeground(new java.awt.Color(255, 255, 255));
         SignUp.setText("I don't have an account");
@@ -120,6 +120,8 @@ public class Login extends javax.swing.JFrame {
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
         jLabel4.setText("LOGIN");
 
+        showPassword.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        showPassword.setForeground(new java.awt.Color(255, 255, 255));
         showPassword.setText("Show Password");
         showPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {

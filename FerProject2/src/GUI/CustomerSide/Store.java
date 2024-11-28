@@ -217,6 +217,9 @@ public class Store extends javax.swing.JFrame {
         jPanel4.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
         jPanel4.setForeground(new java.awt.Color(255, 255, 255));
 
+        categoryLabel.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        categoryLabel.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
@@ -233,6 +236,9 @@ public class Store extends javax.swing.JFrame {
         jPanel6.setBackground(new java.awt.Color(51, 51, 51));
         jPanel6.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
+        EquipmentName.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        EquipmentName.setForeground(new java.awt.Color(255, 255, 255));
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
@@ -246,6 +252,9 @@ public class Store extends javax.swing.JFrame {
 
         Price.setBackground(new java.awt.Color(51, 51, 51));
         Price.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        priceBox.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        priceBox.setForeground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout PriceLayout = new javax.swing.GroupLayout(Price);
         Price.setLayout(PriceLayout);
@@ -269,7 +278,10 @@ public class Store extends javax.swing.JFrame {
         });
 
         descBox.setEditable(false);
+        descBox.setBackground(new java.awt.Color(51, 51, 51));
         descBox.setColumns(20);
+        descBox.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        descBox.setForeground(new java.awt.Color(255, 255, 255));
         descBox.setLineWrap(true);
         descBox.setRows(5);
         descBox.setWrapStyleWord(true);
@@ -277,6 +289,9 @@ public class Store extends javax.swing.JFrame {
 
         Price2.setBackground(new java.awt.Color(51, 51, 51));
         Price2.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+
+        qtyBox.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        qtyBox.setForeground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout Price2Layout = new javax.swing.GroupLayout(Price2);
         Price2.setLayout(Price2Layout);

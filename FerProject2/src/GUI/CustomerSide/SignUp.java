@@ -79,7 +79,7 @@ public class SignUp extends javax.swing.JPanel {
         jLabel2.setText("FULL NAME");
 
         emailBox.setBackground(new java.awt.Color(51, 51, 51));
-        emailBox.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        emailBox.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         emailBox.setForeground(new java.awt.Color(255, 255, 255));
         emailBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -112,6 +112,7 @@ public class SignUp extends javax.swing.JPanel {
         });
 
         nameBox.setBackground(new java.awt.Color(51, 51, 51));
+        nameBox.setFont(new java.awt.Font("Dialog", 1, 18)); // NOI18N
         nameBox.setForeground(new java.awt.Color(255, 255, 255));
         nameBox.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -123,7 +124,7 @@ public class SignUp extends javax.swing.JPanel {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("EMAIL");
 
-        Logins.setBackground(new java.awt.Color(0, 0, 0));
+        Logins.setBackground(new java.awt.Color(51, 51, 51));
         Logins.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Logins.setForeground(new java.awt.Color(255, 255, 255));
         Logins.setText("I already have an account");
@@ -133,6 +134,8 @@ public class SignUp extends javax.swing.JPanel {
             }
         });
 
+        showPassword.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        showPassword.setForeground(new java.awt.Color(255, 255, 255));
         showPassword.setText("Show Password");
         showPassword.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
