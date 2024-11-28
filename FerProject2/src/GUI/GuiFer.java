@@ -6,9 +6,12 @@ package GUI;
 
 import GUI.Extras.RoundButtonUI;
 import GUI.AdminDashboard.Display_Inv;
+import GUI.AdminDashboard.EditBundle;
 import GUI.AdminDashboard.PackageEquip;
 import GUI.AdminDashboard.ViewCusto;
 import GUI.AdminDashboard.Main_Menu;
+import GUI.AdminDashboard.Reports;
+import GUI.AdminDashboard.ReturnCalc;
 import GUI.CustomerSide.Store;
 import GUI.Extras.Connectosql;
 import java.awt.Point;
@@ -54,6 +57,15 @@ public class GuiFer extends javax.swing.JFrame {
         
         Display_Inv invDisplay = new Display_Inv(this); 
         contentPanel.add(invDisplay);
+        
+        ReturnCalc calcReturn = new ReturnCalc(this); 
+        contentPanel.add(calcReturn);
+        
+        Reports reportss = new Reports(this); 
+        contentPanel.add(reportss);
+        
+        EditBundle editBundle = new EditBundle(this); 
+        contentPanel.add(editBundle);
         
         enablePanelDragging(MainPanelDrag);
 

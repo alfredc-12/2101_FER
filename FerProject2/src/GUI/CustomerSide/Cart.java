@@ -9,6 +9,7 @@ import GUI.Extras.CartTableModel;
 import GUI.Extras.Connectosql;
 import GUI.Extras.RoundButtonUI;
 import com.raven.datechooser.SelectedDate;
+import java.awt.Color;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -42,6 +43,10 @@ public class Cart extends javax.swing.JPanel {
         startTime.now();
         startDate.toDay();
         totalCost.setEditable(false);
+        dateEditor.setForeground(Color.WHITE);
+        dateEditor2.setForeground(Color.WHITE);
+        timeEditor.setForeground(Color.WHITE);
+        timeEditor2.setForeground(Color.WHITE);
         // Adding time selection listener to startTime
         startTime.addTimeSelectionListener(e -> updateTotalCost());
         
@@ -204,8 +209,14 @@ public class Cart extends javax.swing.JPanel {
         });
 
         timeEditor.setBackground(new java.awt.Color(0, 0, 0));
+        timeEditor.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                timeEditorActionPerformed(evt);
+            }
+        });
 
         dateEditor.setBackground(new java.awt.Color(0, 0, 0));
+        dateEditor.setForeground(new java.awt.Color(255, 255, 255));
 
         timeEditor2.setBackground(new java.awt.Color(0, 0, 0));
         timeEditor2.addActionListener(new java.awt.event.ActionListener() {
@@ -215,6 +226,7 @@ public class Cart extends javax.swing.JPanel {
         });
 
         dateEditor2.setBackground(new java.awt.Color(0, 0, 0));
+        dateEditor2.setForeground(new java.awt.Color(255, 255, 255));
         dateEditor2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dateEditor2ActionPerformed(evt);
@@ -766,6 +778,10 @@ public class Cart extends javax.swing.JPanel {
             }
         }
     }//GEN-LAST:event_placeRentActionPerformed
+
+    private void timeEditorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_timeEditorActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_timeEditorActionPerformed
 
     private void insertCustomerList(Connection connect, int customerOrderID, int equipmentID) throws SQLException {
         String insertCustomerListQuery = "INSERT INTO customerlist (CustomerOrderID, EquipmentID) VALUES (?, ?)";

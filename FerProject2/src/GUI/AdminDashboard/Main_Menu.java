@@ -507,7 +507,7 @@ public class Main_Menu extends javax.swing.JPanel {
                     .addComponent(CustomerOrderBut, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Returncalc, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(EditFront, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -548,7 +548,7 @@ public class Main_Menu extends javax.swing.JPanel {
                 .addContainerGap()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(EmptyPannel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(EmptyPannel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
             .addComponent(MainPanelDrag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
@@ -733,10 +733,28 @@ public class Main_Menu extends javax.swing.JPanel {
 
     private void EditFrontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditFrontActionPerformed
         // TODO add your handling code here:
+        GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        EditBundle report = new EditBundle(parentFrame);
+
+        parentFrame.setContentPane(report);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_EditFrontActionPerformed
 
     private void ReturncalcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReturncalcActionPerformed
         // TODO add your handling code here:
+        GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        ReturnCalc returns = new ReturnCalc(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(returns);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_ReturncalcActionPerformed
 
     private void AddButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButActionPerformed

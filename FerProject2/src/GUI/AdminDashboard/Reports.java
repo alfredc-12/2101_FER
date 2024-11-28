@@ -3,9 +3,28 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
  */
 package GUI.AdminDashboard;
+import GUI.Extras.Connectosql;
+import GUI.Extras.EquipmentCount;
+import GUI.Extras.EquipmentDAO;
+import GUI.Extras.NonEditableTableModel;
 import GUI.GuiFer;
 import java.awt.Point;
+import com.raven.datechooser.SelectedDate;
+import java.awt.Color;
+import java.time.LocalDateTime;
 import javax.swing.JFrame;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.Duration;
+import java.time.ZoneId;
+import java.util.Date;
+import java.util.List;
+import javax.swing.JOptionPane;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -16,12 +35,50 @@ public class Reports extends javax.swing.JPanel {
     /**
      * Creates new form Reports
      */
+    private EquipmentDAO equipmentDAO;
     private GuiFer parentFrame;
     private Point initialClick;
     
     public Reports (GuiFer frame) {
         this.parentFrame = frame;
+        this.equipmentDAO = new EquipmentDAO();
         initComponents();
+        dateEditor.setText(null);
+        dateEditor2.setText(null);
+        dateEditor.setForeground(Color.WHITE);
+        dateEditor2.setForeground(Color.WHITE);
+        // Add listener to the JComboBox
+        selectEquipment.addActionListener(e -> populateEquipTable());
+
+        // Setup reportTable
+        reportTable.setModel(new NonEditableTableModel(
+            new Object[]{"Customer Start Date", "Customer End Date", "Total Cost"},
+            0
+        ));
+
+        // Setup equipTable with NonEditableTableModel
+        equipTable.setModel(new NonEditableTableModel(
+            new Object[]{"Equipment Name"},
+            0
+        ));
+        
+        searchField.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable();
+            }
+        });
+
         parentFrame.enablePanelDragging(MainPanelDrag);
         parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
@@ -51,14 +108,18 @@ public class Reports extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         dateEditor2 = new javax.swing.JTextField();
-        SelectEquipment = new javax.swing.JComboBox<>();
+        selectEquipment = new javax.swing.JComboBox<>();
         jLabel4 = new javax.swing.JLabel();
         equipments = new javax.swing.JScrollPane();
         equipTable = new javax.swing.JTable();
-        returnBut = new javax.swing.JButton();
+        searchField = new javax.swing.JTextField();
+        jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         result = new javax.swing.JScrollPane();
         reportTable = new javax.swing.JTable();
+        totalReports = new javax.swing.JTextField();
+        show = new javax.swing.JButton();
+        reset = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         DisplayBut = new javax.swing.JButton();
         BundleBut = new javax.swing.JButton();
@@ -146,7 +207,7 @@ public class Reports extends javax.swing.JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(289, Short.MAX_VALUE)
+                .addContainerGap(246, Short.MAX_VALUE)
                 .addComponent(jLabel1)
                 .addGap(261, 261, 261))
         );
@@ -177,6 +238,8 @@ public class Reports extends javax.swing.JPanel {
         jPanel5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         dateEditor.setBackground(new java.awt.Color(0, 0, 0));
+        dateEditor.setForeground(new java.awt.Color(0, 0, 0));
+        dateEditor.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         dateEditor.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dateEditorActionPerformed(evt);
@@ -192,19 +255,26 @@ public class Reports extends javax.swing.JPanel {
         jLabel3.setText("End Date");
 
         dateEditor2.setBackground(new java.awt.Color(0, 0, 0));
+        dateEditor2.setForeground(new java.awt.Color(255, 255, 255));
+        dateEditor2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
         dateEditor2.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 dateEditor2ActionPerformed(evt);
             }
         });
 
-        SelectEquipment.setBackground(new java.awt.Color(51, 51, 51));
-        SelectEquipment.setForeground(new java.awt.Color(255, 255, 255));
-        SelectEquipment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Non Selected", "Camera", "Audio", "Lighting", "Miscellaneous", "Package", " " }));
+        selectEquipment.setBackground(new java.awt.Color(51, 51, 51));
+        selectEquipment.setForeground(new java.awt.Color(255, 255, 255));
+        selectEquipment.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Non Selected", "Camera", "Audio", "Lighting", "Miscellaneous", "" }));
+        selectEquipment.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectEquipmentActionPerformed(evt);
+            }
+        });
 
         jLabel4.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-        jLabel4.setText("Select Equipment");
+        jLabel4.setText("Specify");
 
         equipTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -219,10 +289,16 @@ public class Reports extends javax.swing.JPanel {
         ));
         equipments.setViewportView(equipTable);
 
-        returnBut.setBackground(new java.awt.Color(51, 51, 51));
-        returnBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        returnBut.setForeground(new java.awt.Color(255, 255, 255));
-        returnBut.setText("RETURN");
+        searchField.setBackground(new java.awt.Color(51, 51, 51));
+        searchField.setForeground(new java.awt.Color(255, 255, 255));
+        searchField.setText("Search");
+        searchField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                searchFieldActionPerformed(evt);
+            }
+        });
+
+        jLabel5.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-search-25.png"))); // NOI18N
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -231,27 +307,37 @@ public class Reports extends javax.swing.JPanel {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(43, 43, 43)
-                        .addComponent(jLabel2))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(44, 44, 44)
-                        .addComponent(jLabel3))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(returnBut))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(16, 16, 16)
                         .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(equipments, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                                .addComponent(SelectEquipment, javax.swing.GroupLayout.Alignment.LEADING, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                .addComponent(dateEditor, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addComponent(dateEditor2, javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel5Layout.createSequentialGroup()
-                                    .addGap(9, 9, 9)
-                                    .addComponent(jLabel4))))))
-                .addContainerGap(29, Short.MAX_VALUE))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(16, 16, 16)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(dateEditor2, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(dateEditor, javax.swing.GroupLayout.PREFERRED_SIZE, 123, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(49, 49, 49)
+                                .addComponent(jLabel3))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addGap(45, 45, 45)
+                                .addComponent(jLabel2)))
+                        .addGap(0, 9, Short.MAX_VALUE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(searchField)))
+                .addContainerGap())
+            .addGroup(jPanel5Layout.createSequentialGroup()
+                .addGap(62, 62, 62)
+                .addComponent(jLabel5)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addComponent(equipments, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                        .addComponent(selectEquipment, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel5Layout.createSequentialGroup()
+                        .addGap(32, 32, 32)
+                        .addComponent(jLabel4)))
+                .addGap(21, 21, 21))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -264,15 +350,17 @@ public class Reports extends javax.swing.JPanel {
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(dateEditor2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(31, 31, 31)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(SelectEquipment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(selectEquipment, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(equipments, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
-                .addComponent(returnBut)
-                .addGap(29, 29, 29))
+                .addComponent(equipments, javax.swing.GroupLayout.PREFERRED_SIZE, 185, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19)
+                .addComponent(jLabel5)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 13, Short.MAX_VALUE)
+                .addComponent(searchField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         jPanel6.setBackground(new java.awt.Color(102, 102, 102));
@@ -295,15 +383,56 @@ public class Reports extends javax.swing.JPanel {
         ));
         result.setViewportView(reportTable);
 
+        totalReports.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                totalReportsActionPerformed(evt);
+            }
+        });
+
+        show.setBackground(new java.awt.Color(51, 51, 51));
+        show.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        show.setForeground(new java.awt.Color(255, 255, 255));
+        show.setText("SHOW");
+        show.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                showActionPerformed(evt);
+            }
+        });
+
+        reset.setBackground(new java.awt.Color(51, 51, 51));
+        reset.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        reset.setForeground(new java.awt.Color(255, 255, 255));
+        reset.setText("RESET");
+        reset.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                resetActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
         jPanel6.setLayout(jPanel6Layout);
         jPanel6Layout.setHorizontalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(result, javax.swing.GroupLayout.Alignment.TRAILING)
+            .addComponent(result, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 715, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(show)
+                .addGap(38, 38, 38)
+                .addComponent(reset)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(totalReports, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(result)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addComponent(result, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(totalReports, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(show)
+                    .addComponent(reset))
+                .addGap(0, 0, Short.MAX_VALUE))
         );
 
         jPanel2.setBackground(new java.awt.Color(102, 102, 102));
@@ -455,7 +584,7 @@ public class Reports extends javax.swing.JPanel {
                     .addComponent(CustomerOrderBut, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Returncalc, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(EditFront, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -475,7 +604,7 @@ public class Reports extends javax.swing.JPanel {
                 .addComponent(BundleBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(CustomerOrderBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 25, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jPanel7, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenMenu, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -535,6 +664,188 @@ public class Reports extends javax.swing.JPanel {
             .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
+    private void generateReport() {
+        // Fetch selected dates
+        SelectedDate startDateValue = startDate.getSelectedDate();
+        SelectedDate endDateValue = endDate.getSelectedDate();
+
+        if (startDateValue == null || endDateValue == null) {
+            return; // Exit if either date is not selected
+        }
+
+        LocalDateTime startDateTime = LocalDateTime.of(startDateValue.getYear(), startDateValue.getMonth(), startDateValue.getDay(), 0, 0);
+        LocalDateTime endDateTime = LocalDateTime.of(endDateValue.getYear(), endDateValue.getMonth(), endDateValue.getDay(), 23, 59);
+
+        String selectedCategory = (String) selectEquipment.getSelectedItem();
+        StringBuilder equipmentIds = new StringBuilder();
+
+        if (!"Non Selected".equals(selectedCategory)) {
+            // Get selected equipment names
+            int[] selectedRows = equipTable.getSelectedRows();
+            if (selectedRows.length == 0) {
+                JOptionPane.showMessageDialog(this, "Please select at least one equipment from the table.", "No Equipment Selected", JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            for (int row : selectedRows) {
+                String equipmentName = (String) equipTable.getValueAt(row, 0);
+                equipmentIds.append("'").append(equipmentName).append("'").append(",");
+            }
+
+            // Remove the last comma
+            if (equipmentIds.length() > 0) {
+                equipmentIds.setLength(equipmentIds.length() - 1);
+            }
+        }
+
+        Connection connect = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            // Connect to the database
+            connect = Connectosql.getInstance().getConnection();
+
+            String query = "SELECT o.CustomerStartDate, o.CustomerEndDate, e.EquipmentName, e.RentedPrice " +
+                           "FROM customerorder o " +
+                           "JOIN customerlist l ON o.CustomerOrderID = l.CustomerOrderID " +
+                           "JOIN equipment e ON l.EquipmentID = e.EquipmentID " +
+                           "WHERE o.CustomerStartDate BETWEEN ? AND ?";
+
+            if (!"Non Selected".equals(selectedCategory)) {
+                query += " AND e.EquipmentName IN (" + equipmentIds.toString() + ")";
+            }
+
+            stmt = connect.prepareStatement(query);
+            stmt.setTimestamp(1, java.sql.Timestamp.valueOf(startDateTime));
+            stmt.setTimestamp(2, java.sql.Timestamp.valueOf(endDateTime));
+
+            rs = stmt.executeQuery();
+            DefaultTableModel model = (DefaultTableModel) reportTable.getModel();
+            model.setRowCount(0); // Clear existing rows
+
+            double totalReportValue = 0.0;
+
+            while (rs.next()) {
+                Date customerStartDate = rs.getTimestamp("CustomerStartDate");
+                Date customerEndDate = rs.getTimestamp("CustomerEndDate");
+                String equipmentName = rs.getString("EquipmentName");
+                double rentedPrice = rs.getDouble("RentedPrice");
+
+                LocalDateTime start = LocalDateTime.ofInstant(customerStartDate.toInstant(), ZoneId.systemDefault());
+                LocalDateTime end = LocalDateTime.ofInstant(customerEndDate.toInstant(), ZoneId.systemDefault());
+
+                long rentalHours = calculateRentalHours(start, end);
+                double hourlyRate = rentedPrice / 12.0; // Assume 12-hour rental periods
+                double totalCost = hourlyRate * rentalHours;
+
+                totalReportValue += totalCost;
+
+                model.addRow(new Object[]{
+                    customerStartDate,
+                    customerEndDate,
+                    equipmentName,
+                    totalCost
+                });
+            }
+
+            totalReports.setText(String.valueOf(totalReportValue));
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error generating report: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (connect != null) connect.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private void filterTable() {
+        String query = searchField.getText().toLowerCase();
+        DefaultTableModel model = (DefaultTableModel) equipTable.getModel();
+        model.setRowCount(0); // Clear existing rows
+
+        List<EquipmentCount> equipmentCounts = equipmentDAO.getAllEquipment();
+        for (EquipmentCount equipmentCount : equipmentCounts) {
+            if (equipmentCount.getName().toLowerCase().contains(query)) {
+                model.addRow(new Object[]{
+                    equipmentCount.getName()
+                });
+            }
+        }
+    }
+    
+    private long calculateRentalHours(LocalDateTime startDateTime, LocalDateTime endDateTime) {
+        Duration duration = Duration.between(startDateTime, endDateTime);
+        return duration.toHours();
+    }
+
+    private void populateEquipTable() {
+        String selectedCategory = (String) selectEquipment.getSelectedItem();
+
+        if ("Non Selected".equals(selectedCategory)) {
+            ((DefaultTableModel) equipTable.getModel()).setRowCount(0); // Clear the table
+            return;
+        }
+
+        int categoryID = getCategoryID(selectedCategory);
+
+        Connection connect = null;
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+
+        try {
+            // Connect to the database
+            connect = Connectosql.getInstance().getConnection();
+
+            String query = "SELECT EquipmentName FROM equipment " +
+                           "WHERE EquipmentCategoryID = ? GROUP BY EquipmentName";
+            stmt = connect.prepareStatement(query);
+            stmt.setInt(1, categoryID);
+
+            rs = stmt.executeQuery();
+            DefaultTableModel model = (DefaultTableModel) equipTable.getModel();
+            model.setRowCount(0); // Clear existing rows
+
+            while (rs.next()) {
+                String equipmentName = rs.getString("EquipmentName");
+
+                model.addRow(new Object[]{
+                    equipmentName
+                });
+            }
+
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error populating equipment table: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            try {
+                if (rs != null) rs.close();
+                if (stmt != null) stmt.close();
+                if (connect != null) connect.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+
+    private int getCategoryID(String category) {
+        switch (category) {
+            case "Camera":
+                return 1;
+            case "Audio":
+                return 3;
+            case "Lighting":
+                return 2;
+            case "Miscellaneous":
+                return 4;
+            default:
+                return -1;
+        }
+    }
 
     private void Resize_frontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Resize_frontActionPerformed
         // TODO add your handling code here:
@@ -639,6 +950,31 @@ public class Reports extends javax.swing.JPanel {
         parentFrame.repaint();
     }//GEN-LAST:event_AddButActionPerformed
 
+    private void totalReportsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalReportsActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_totalReportsActionPerformed
+
+    private void searchFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchFieldActionPerformed
+        // TODO add your handling code here:
+
+    }//GEN-LAST:event_searchFieldActionPerformed
+
+    private void showActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showActionPerformed
+        // TODO add your handling code here:
+        generateReport();
+    }//GEN-LAST:event_showActionPerformed
+
+    private void resetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_resetActionPerformed
+        dateEditor.setText(null);
+        dateEditor2.setText(null);
+        ((DefaultTableModel) reportTable.getModel()).setRowCount(0);
+        totalReports.setText("");
+    }//GEN-LAST:event_resetActionPerformed
+
+    private void selectEquipmentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectEquipmentActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_selectEquipmentActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton AddBut;
@@ -653,7 +989,6 @@ public class Reports extends javax.swing.JPanel {
     private javax.swing.JButton Reports;
     private javax.swing.JButton Resize_front;
     private javax.swing.JButton Returncalc;
-    private javax.swing.JComboBox<String> SelectEquipment;
     private javax.swing.JTextField dateEditor;
     private javax.swing.JTextField dateEditor2;
     private com.raven.datechooser.DateChooser endDate;
@@ -664,6 +999,7 @@ public class Reports extends javax.swing.JPanel {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -675,8 +1011,12 @@ public class Reports extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel8;
     private javax.swing.JLabel logo;
     private javax.swing.JTable reportTable;
+    private javax.swing.JButton reset;
     private javax.swing.JScrollPane result;
-    private javax.swing.JButton returnBut;
+    private javax.swing.JTextField searchField;
+    private javax.swing.JComboBox<String> selectEquipment;
+    private javax.swing.JButton show;
     private com.raven.datechooser.DateChooser startDate;
+    private javax.swing.JTextField totalReports;
     // End of variables declaration//GEN-END:variables
 }
