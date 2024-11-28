@@ -4,12 +4,17 @@
  */
 package GUI.CustomerSide;
 
+import GUI.Extras.Connectosql;
+import GUI.Extras.RoundButtonUI;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.Statement;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import java.sql.SQLException;
 
 /**
  *
@@ -21,13 +26,15 @@ public class SignUp extends javax.swing.JPanel {
      * Creates new form SignUp
      */
     private Login parentFrame;
+    public static String signedUpUserName;
+    public static String signedUpUserEmail;
     public SignUp(Login frame) {
         this.parentFrame = frame;
         initComponents();
         parentFrame.enablePanelDragging(MainPanelDrag);
         addExitButtonListener();
         Loginsbutton();
-
+        customizeButton();
         parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
@@ -44,11 +51,11 @@ public class SignUp extends javax.swing.JPanel {
         jPanel3 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        EmailSignup = new java.awt.TextField();
+        emailBox = new java.awt.TextField();
         jLabel3 = new javax.swing.JLabel();
         Password = new javax.swing.JPasswordField();
-        SIgnUp = new javax.swing.JButton();
-        FullName = new java.awt.TextField();
+        SignUp = new javax.swing.JButton();
+        nameBox = new java.awt.TextField();
         jLabel5 = new javax.swing.JLabel();
         Logins = new javax.swing.JButton();
         showPassword = new javax.swing.JRadioButton();
@@ -71,9 +78,14 @@ public class SignUp extends javax.swing.JPanel {
         jLabel2.setForeground(new java.awt.Color(255, 255, 255));
         jLabel2.setText("FULL NAME");
 
-        EmailSignup.setBackground(new java.awt.Color(51, 51, 51));
-        EmailSignup.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
-        EmailSignup.setForeground(new java.awt.Color(255, 255, 255));
+        emailBox.setBackground(new java.awt.Color(51, 51, 51));
+        emailBox.setFont(new java.awt.Font("Dialog", 0, 14)); // NOI18N
+        emailBox.setForeground(new java.awt.Color(255, 255, 255));
+        emailBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailBoxActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
@@ -88,17 +100,22 @@ public class SignUp extends javax.swing.JPanel {
             }
         });
 
-        SIgnUp.setBackground(new java.awt.Color(51, 51, 51));
-        SIgnUp.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        SIgnUp.setForeground(new java.awt.Color(255, 255, 255));
-        SIgnUp.setText("SIGN UP");
-        SIgnUp.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
-
-        FullName.setBackground(new java.awt.Color(51, 51, 51));
-        FullName.setForeground(new java.awt.Color(255, 255, 255));
-        FullName.addActionListener(new java.awt.event.ActionListener() {
+        SignUp.setBackground(new java.awt.Color(51, 51, 51));
+        SignUp.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        SignUp.setForeground(new java.awt.Color(255, 255, 255));
+        SignUp.setText("SIGN UP");
+        SignUp.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        SignUp.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                FullNameActionPerformed(evt);
+                SignUpActionPerformed(evt);
+            }
+        });
+
+        nameBox.setBackground(new java.awt.Color(51, 51, 51));
+        nameBox.setForeground(new java.awt.Color(255, 255, 255));
+        nameBox.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nameBoxActionPerformed(evt);
             }
         });
 
@@ -143,14 +160,14 @@ public class SignUp extends javax.swing.JPanel {
                     .addGroup(jPanel3Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(EmailSignup, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(emailBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addComponent(Password)
-                            .addComponent(FullName, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(nameBox, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                             .addGroup(jPanel3Layout.createSequentialGroup()
                                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel3)
-                                    .addComponent(SIgnUp, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(SignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 94, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(0, 0, Short.MAX_VALUE)))))
                 .addContainerGap())
@@ -163,11 +180,11 @@ public class SignUp extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
                 .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(FullName, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(nameBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 20, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(EmailSignup, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(emailBox, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -175,7 +192,7 @@ public class SignUp extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(showPassword)
                 .addGap(19, 19, 19)
-                .addComponent(SIgnUp, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(SignUp, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(44, 44, 44)
                 .addComponent(Logins)
                 .addGap(22, 22, 22))
@@ -278,6 +295,13 @@ public class SignUp extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void customizeButton() {
+        // Assuming the button is named exitButton in the design mode
+        Exit_front.setUI(new RoundButtonUI());
+        Minimize_front.setUI(new RoundButtonUI());
+        Resize_front.setUI(new RoundButtonUI());
+    }
+    
     private void addExitButtonListener() {
         // Assuming the button is named exitButton in your GUI builder
         Exit_front.addActionListener(new java.awt.event.ActionListener() {
@@ -328,9 +352,9 @@ public class SignUp extends javax.swing.JPanel {
         parentFrame.showLoginPanel();
     }//GEN-LAST:event_LoginsActionPerformed
 
-    private void FullNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_FullNameActionPerformed
+    private void nameBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameBoxActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_FullNameActionPerformed
+    }//GEN-LAST:event_nameBoxActionPerformed
 
     private void showPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPasswordActionPerformed
         // TODO add your handling code here:
@@ -345,17 +369,72 @@ public class SignUp extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_PasswordActionPerformed
 
+    private void SignUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_SignUpActionPerformed
+ // Fetch data from the text fields
+        String name = nameBox.getText();
+        String email = emailBox.getText();
+        String password = new String(Password.getPassword());  // Using getPassword() to fetch the char array and convert to String
+
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill in all the fields", "Error", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        Connection connect = null;
+        Statement stmt = null;
+
+        try {
+            // Connect to the database
+            connect = Connectosql.getInstance().getConnection();
+            stmt = connect.createStatement();
+
+            String query = "INSERT INTO userlist (CustomerName, CustomerEmail, CustomerPassword, CustomerAddress, CustomerPhone) " +
+                           "VALUES ('" + name + "', '" + email + "', '" + password + "', NULL, NULL)";
+
+            stmt.execute(query);
+
+            // Show a dialog box for successful registration
+            JOptionPane.showMessageDialog(this, "User registered successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+            // Store user information
+            signedUpUserName = name;
+            signedUpUserEmail = email;
+
+            // Clear the fields after insertion
+            nameBox.setText("");
+            emailBox.setText("");
+            Password.setText("");
+
+            // Navigate to the Cart class or next form as needed
+            // e.g., new Cart().setVisible(true);
+            parentFrame.dispose();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error inserting data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            // Ensure the statement and connection are closed
+            try {
+                if (stmt != null) stmt.close();
+                if (connect != null) connect.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_SignUpActionPerformed
+
+    private void emailBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailBoxActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailBoxActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private java.awt.TextField EmailSignup;
     private javax.swing.JButton Exit_front;
-    private java.awt.TextField FullName;
     private javax.swing.JButton Logins;
     private javax.swing.JPanel MainPanelDrag;
     private javax.swing.JButton Minimize_front;
     private javax.swing.JPasswordField Password;
     private javax.swing.JButton Resize_front;
-    private javax.swing.JButton SIgnUp;
+    private javax.swing.JButton SignUp;
+    private java.awt.TextField emailBox;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
@@ -363,6 +442,7 @@ public class SignUp extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
+    private java.awt.TextField nameBox;
     private javax.swing.JRadioButton showPassword;
     // End of variables declaration//GEN-END:variables
 }

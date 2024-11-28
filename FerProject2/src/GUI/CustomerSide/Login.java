@@ -4,8 +4,12 @@
  */
 package GUI.CustomerSide;
 
-import GUI.CustomerSide.SignUp;
+import GUI.Extras.Connectosql;
+import GUI.Extras.RoundButtonUI;
 import GUI.GuiFer;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Point;
@@ -14,14 +18,17 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import java.sql.SQLException;
 
 /**
  *
  * @author asadagreat
  */
 public class Login extends javax.swing.JFrame {
-
+    public static String loggedInUserName;
+    public static String loggedInUserEmail;
     private boolean GuiFerOpen = false;
     public Login() {
         this.setUndecorated(true);
@@ -35,7 +42,7 @@ public class Login extends javax.swing.JFrame {
 
         enablePanelDragging(MainPanelDrag);
         signUpbutton();
-        
+        customizeButton();
         this.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
     }
 
@@ -148,7 +155,7 @@ public class Login extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(169, 169, 169)
                 .addComponent(jLabel4)
-                .addContainerGap(173, Short.MAX_VALUE))
+                .addContainerGap(149, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -233,7 +240,7 @@ public class Login extends javax.swing.JFrame {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 391, Short.MAX_VALUE)
+            .addGap(0, 415, Short.MAX_VALUE)
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -247,7 +254,8 @@ public class Login extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(0, 0, Short.MAX_VALUE))
             .addComponent(MainPanelDrag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -274,6 +282,13 @@ public class Login extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
   
+    private void customizeButton() {
+        // Assuming the button is named exitButton in the design mode
+        Exit_front.setUI(new RoundButtonUI());
+        Minimize_front.setUI(new RoundButtonUI());
+        Resize_front.setUI(new RoundButtonUI());
+    }
+    
     private void signUpbutton(){
         SignUp.setText("<html><u>I don't have an account</u></html>");
 
@@ -365,26 +380,48 @@ public class Login extends javax.swing.JFrame {
     }//GEN-LAST:event_SignUpActionPerformed
 
     private void LoginButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LoginButtonActionPerformed
-        // TODO add your handling code here:
+        // Fetch data from input fields
         String email = Email.getText();
         char[] password = Password.getPassword();
         String pass = new String(password);
         
-        if ("admin".equals(pass) && "admin".equals(email)){
-            if (!GuiFerOpen) {
-                GuiFer guifer = new GuiFer();
-                guifer.setVisible(true);
-                GuiFerOpen = true; 
+        if ("admin".equals(email) && "admin".equals(pass)) {
+           GuiFer guifer = new GuiFer();
+           guifer.setVisible(true);
+           GuiFerOpen = true;
+           dispose();
+           guifer.addWindowListener(new java.awt.event.WindowAdapter() {
+           @Override
+               public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+               GuiFerOpen = false;
+               }
+           });
+        } else {
+            try (Connection connect = Connectosql.getInstance().getConnection();
+             PreparedStatement stmt = connect.prepareStatement("SELECT * FROM userlist WHERE CustomerEmail = ? AND CustomerPassword = ?")) {
 
-                guifer.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                        GuiFerOpen = false;
+                stmt.setString(1, email);
+                stmt.setString(2, pass);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        // Login successful, store user information
+                        loggedInUserName = rs.getString("CustomerName");
+                        loggedInUserEmail = rs.getString("CustomerEmail");
+
+                        JOptionPane.showMessageDialog(this, "Login successful!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+                        // Open the main application window or dashboard
+                        dispose();
+                    } else {
+                        // Login failed
+                        JOptionPane.showMessageDialog(this, "Invalid email or password", "Error", JOptionPane.ERROR_MESSAGE);
                     }
-                });
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error validating credentials: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
             }
         }
-        
     }//GEN-LAST:event_LoginButtonActionPerformed
 
     private void showPasswordActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_showPasswordActionPerformed

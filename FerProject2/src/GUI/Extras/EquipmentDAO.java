@@ -6,6 +6,32 @@ import java.util.List;
 
 public class EquipmentDAO {
     
+    public List<EquipmentCount> getAllEquipment() {
+       List<EquipmentCount> equipmentList = new ArrayList<>();
+       String query = "SELECT * FROM equipment";
+       try (Connection connect = Connectosql.getInstance().getConnection();
+             PreparedStatement stmt = connect.prepareStatement(query)){
+           ResultSet resultSet = stmt.executeQuery();
+
+           while (resultSet.next()) {
+               int id = resultSet.getInt("EquipmentID");
+               String name = resultSet.getString("EquipmentName");
+               double price = resultSet.getDouble("RentedPrice");
+               String description = resultSet.getString("EquipmentDesc");
+               byte[] image = resultSet.getBytes("EquipmentImage");
+               int categoryID = resultSet.getInt("EquipmentCategoryID");
+               boolean availability = resultSet.getBoolean("EquipmentAvailability");
+
+               EquipmentCount equipment = new EquipmentCount(id, name, price, 0, 0, categoryID, description, image, availability);
+
+               equipmentList.add(equipment);
+           }
+       } catch (SQLException e) {
+           e.printStackTrace();
+       }
+       return equipmentList;
+   }
+
     public EquipmentCount getEquipmentByName(String name) {
         String query = "SELECT EquipmentID, EquipmentName, RentedPrice, COUNT(*) as TotalCount, SUM(CASE WHEN EquipmentAvailability = TRUE THEN 1 ELSE 0 END) as AvailableCount, EquipmentCategoryID, EquipmentDesc, EquipmentImage FROM Equipment WHERE EquipmentName = ? GROUP BY EquipmentID, EquipmentName, RentedPrice, EquipmentCategoryID, EquipmentDesc, EquipmentImage";
         try (Connection connect = Connectosql.getInstance().getConnection();
@@ -32,34 +58,6 @@ public class EquipmentDAO {
         return null;
     }
     
-    public List<EquipmentCount> getAllEquipment() {
-        List<EquipmentCount> equipmentList = new ArrayList<>();
-        String query = "SELECT EquipmentID, EquipmentName, RentedPrice, SUM(CASE WHEN EquipmentAvailability = TRUE THEN 1 ELSE 0 END) as AvailableCount, EquipmentCategoryID, EquipmentDesc, EquipmentImage FROM equipment GROUP BY EquipmentID, EquipmentName, RentedPrice, EquipmentCategoryID, EquipmentDesc, EquipmentImage";
-
-        try (Connection connect = Connectosql.getInstance().getConnection();
-             PreparedStatement stmt = connect.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-
-            while (rs.next()) {
-                EquipmentCount equipment = new EquipmentCount(
-                    rs.getString("EquipmentName"),
-                    rs.getDouble("RentedPrice"),
-                    rs.getInt("AvailableCount"), // Using available count
-                    rs.getInt("AvailableCount"), // Using available count for initialization
-                    rs.getInt("EquipmentCategoryID"),
-                    rs.getString("EquipmentDesc")
-                );
-                equipment.setID(rs.getInt("EquipmentID"));
-                equipment.setImage(rs.getBytes("EquipmentImage"));
-                equipmentList.add(equipment);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
-        return equipmentList;
-    }
-
     public List<EquipmentCount> getEquipmentListDetailsByPackageID(int packageID) {
         List<EquipmentCount> equipmentList = new ArrayList<>();
         String query = "SELECT e.EquipmentID, e.EquipmentName, e.RentedPrice, SUM(CASE WHEN e.EquipmentAvailability = TRUE THEN 1 ELSE 0 END) as AvailableCount, e.EquipmentCategoryID, e.EquipmentDesc, e.EquipmentImage FROM packageequipment pe JOIN Equipment e ON pe.EquipmentID = e.EquipmentID WHERE pe.PackageID = ? GROUP BY e.EquipmentID, e.EquipmentName, e.RentedPrice, e.EquipmentCategoryID, e.EquipmentDesc, e.EquipmentImage";
@@ -164,6 +162,21 @@ public class EquipmentDAO {
         return null;
     }
 
+    public boolean isPackage(int equipmentID) {
+        String query = "SELECT COUNT(*) FROM package WHERE PackageID = ?";
+        try (Connection connect = Connectosql.getInstance().getConnection();
+             PreparedStatement stmt = connect.prepareStatement(query)) {
+            stmt.setInt(1, equipmentID);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
     public int getEquipmentIDByName(String name) {
         String query = "SELECT EquipmentID FROM Equipment WHERE EquipmentName = ?";
         try (Connection conn = Connectosql.getInstance().getConnection();

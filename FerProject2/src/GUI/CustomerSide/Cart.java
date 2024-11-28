@@ -6,14 +6,25 @@ package GUI.CustomerSide;
 
 import GUI.Extras.EquipmentCount;
 import GUI.Extras.CartTableModel;
+import GUI.Extras.Connectosql;
 import GUI.Extras.RoundButtonUI;
+import com.raven.datechooser.SelectedDate;
 import java.awt.Point;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.sql.Timestamp;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 /**
  *
  * @author leyzu
@@ -28,27 +39,40 @@ public class Cart extends javax.swing.JPanel {
         parentFrame.enablePanelDragging(MainPanelDrag2);
         startTime.setEditor(timeEditor);
         endTime.setEditor(timeEditor2);
-                equipTable.addMouseListener(new MouseAdapter() {
+        startTime.now();
+        startDate.toDay();
+        totalCost.setEditable(false);
+        // Adding time selection listener to startTime
+        startTime.addTimeSelectionListener(e -> updateTotalCost());
+        
+        // Adding time selection listener to endTime
+        endTime.addTimeSelectionListener(e -> updateTotalCost());
+        startDate.addPropertyChangeListener(e -> updateTotalCost());
+        endDate.addPropertyChangeListener(e -> updateTotalCost());
+        
+        equipTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     int row = equipTable.getSelectedRow();
                     if (row != -1) {
                         EquipmentCount item = parentFrame.getCartItems().get(row);
-                        parentFrame.getCartItems().remove(row);
-                        int currentCount = parentFrame.equipmentQuantities.getOrDefault(item.getName(), 0);
-                        if (currentCount > 1) {
-                            parentFrame.equipmentQuantities.put(item.getName(), currentCount - 1);
+
+                        if (item.isPartOfPackage()) {
+                            removePackageItemsFromCart(item);
                         } else {
-                            parentFrame.equipmentQuantities.remove(item.getName());
+                            removeIndividualItemFromCart(row, item);
                         }
+
                         updateCartTable(parentFrame.getCartItems());
-                        JOptionPane.showMessageDialog(parentFrame, item.getName() + " removed from the cart.", "Item Removed", JOptionPane.INFORMATION_MESSAGE);
+                        updateTotalCost(); // Update total cost after removing items
                     }
                 }
             }
         });
+        
         customizeButton();
         parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        updateTotalCost();
     }
 
     /**
@@ -71,24 +95,24 @@ public class Cart extends javax.swing.JPanel {
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
-        phoneCheckout = new java.awt.TextField();
-        emailCheckout = new java.awt.TextField();
-        nameCheckout = new java.awt.TextField();
-        textField1 = new java.awt.TextField();
+        addressCheckout = new java.awt.TextField();
         jLabel4 = new javax.swing.JLabel();
         jLabel6 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
         PaymentMethod = new javax.swing.JComboBox<>();
         jLabel9 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        totalCost = new javax.swing.JTextField();
         timeEditor = new javax.swing.JFormattedTextField();
         dateEditor = new javax.swing.JTextField();
         timeEditor2 = new javax.swing.JFormattedTextField();
         dateEditor2 = new javax.swing.JTextField();
+        nameCheckout = new javax.swing.JTextField();
+        emailCheckout = new javax.swing.JTextField();
+        phoneCheckout = new javax.swing.JTextField();
         jPanel8 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        Checkout = new javax.swing.JButton();
+        placeRent = new javax.swing.JButton();
         MainPanelDrag2 = new javax.swing.JPanel();
         backBut = new javax.swing.JButton();
         Exit_front2 = new javax.swing.JButton();
@@ -140,25 +164,11 @@ public class Cart extends javax.swing.JPanel {
         jLabel5.setForeground(new java.awt.Color(255, 255, 255));
         jLabel5.setText("Customer Email");
 
-        phoneCheckout.setBackground(new java.awt.Color(51, 51, 51));
-        phoneCheckout.setForeground(new java.awt.Color(255, 255, 255));
-
-        emailCheckout.setBackground(new java.awt.Color(51, 51, 51));
-        emailCheckout.setForeground(new java.awt.Color(255, 255, 255));
-
-        nameCheckout.setBackground(new java.awt.Color(51, 51, 51));
-        nameCheckout.setForeground(new java.awt.Color(255, 255, 255));
-        nameCheckout.addActionListener(new java.awt.event.ActionListener() {
+        addressCheckout.setBackground(new java.awt.Color(51, 51, 51));
+        addressCheckout.setForeground(new java.awt.Color(255, 255, 255));
+        addressCheckout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                nameCheckoutActionPerformed(evt);
-            }
-        });
-
-        textField1.setBackground(new java.awt.Color(51, 51, 51));
-        textField1.setForeground(new java.awt.Color(255, 255, 255));
-        textField1.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textField1ActionPerformed(evt);
+                addressCheckoutActionPerformed(evt);
             }
         });
 
@@ -187,9 +197,9 @@ public class Cart extends javax.swing.JPanel {
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Total Cost");
 
-        jTextField1.addActionListener(new java.awt.event.ActionListener() {
+        totalCost.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jTextField1ActionPerformed(evt);
+                totalCostActionPerformed(evt);
             }
         });
 
@@ -211,6 +221,24 @@ public class Cart extends javax.swing.JPanel {
             }
         });
 
+        nameCheckout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                nameCheckoutActionPerformed(evt);
+            }
+        });
+
+        emailCheckout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                emailCheckoutActionPerformed(evt);
+            }
+        });
+
+        phoneCheckout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                phoneCheckoutActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -228,7 +256,7 @@ public class Cart extends javax.swing.JPanel {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(textField1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                    .addComponent(addressCheckout, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                                             .addComponent(jLabel5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -236,9 +264,9 @@ public class Cart extends javax.swing.JPanel {
                                             .addComponent(jLabel3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                            .addComponent(emailCheckout, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(nameCheckout, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                            .addComponent(phoneCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 478, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                            .addComponent(nameCheckout, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 478, Short.MAX_VALUE)
+                                            .addComponent(emailCheckout, javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(phoneCheckout, javax.swing.GroupLayout.Alignment.LEADING)))))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGap(70, 70, 70)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -258,7 +286,7 @@ public class Cart extends javax.swing.JPanel {
                                                         .addComponent(PaymentMethod, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                         .addGap(90, 90, 90))))
                                             .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                                .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                .addComponent(totalCost, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addComponent(timeEditor2, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                                                 .addGroup(jPanel2Layout.createSequentialGroup()
                                                     .addGap(62, 62, 62)
@@ -269,30 +297,30 @@ public class Cart extends javax.swing.JPanel {
                                     .addGroup(jPanel2Layout.createSequentialGroup()
                                         .addGap(74, 74, 74)
                                         .addComponent(jLabel6)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 227, Short.MAX_VALUE)
                                         .addComponent(jLabel8)
                                         .addGap(118, 118, 118)))))
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                        .addContainerGap(14, Short.MAX_VALUE))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(nameCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel2))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel2)
+                    .addComponent(nameCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(emailCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(phoneCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(phoneCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(textField1, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(addressCheckout, javax.swing.GroupLayout.PREFERRED_SIZE, 52, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
@@ -309,12 +337,12 @@ public class Cart extends javax.swing.JPanel {
                 .addComponent(jLabel9)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(totalCost, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addComponent(jLabel7)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(PaymentMethod, javax.swing.GroupLayout.PREFERRED_SIZE, 28, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(20, Short.MAX_VALUE))
+                .addContainerGap(33, Short.MAX_VALUE))
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(equipScroll)
@@ -345,10 +373,15 @@ public class Cart extends javax.swing.JPanel {
                 .addContainerGap())
         );
 
-        Checkout.setBackground(new java.awt.Color(102, 102, 102));
-        Checkout.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
-        Checkout.setForeground(new java.awt.Color(255, 255, 255));
-        Checkout.setText("Proceed To Checkout");
+        placeRent.setBackground(new java.awt.Color(102, 102, 102));
+        placeRent.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        placeRent.setForeground(new java.awt.Color(255, 255, 255));
+        placeRent.setText("Rent Equipment");
+        placeRent.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                placeRentActionPerformed(evt);
+            }
+        });
 
         MainPanelDrag2.setBackground(new java.awt.Color(102, 102, 102));
         MainPanelDrag2.setBorder(javax.swing.BorderFactory.createEtchedBorder());
@@ -411,11 +444,11 @@ public class Cart extends javax.swing.JPanel {
                     .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
-            .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(390, 390, 390)
-                .addComponent(Checkout)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addComponent(MainPanelDrag2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(402, 402, 402)
+                .addComponent(placeRent)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -424,9 +457,9 @@ public class Cart extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(Checkout)
+                .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(placeRent)
                 .addContainerGap())
         );
 
@@ -442,27 +475,121 @@ public class Cart extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void retrieveUserInfo() {
+        // Check if user is signed up or logged in
+        String email = (SignUp.signedUpUserEmail != null) ? SignUp.signedUpUserEmail : Login.loggedInUserEmail;
+
+        if (email != null) {
+            try (Connection connect = Connectosql.getInstance().getConnection();
+                 PreparedStatement stmt = connect.prepareStatement("SELECT CustomerName, CustomerEmail, CustomerPhone, CustomerAddress FROM userlist WHERE CustomerEmail = ?")) {
+
+                stmt.setString(1, email);
+
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        String customerName = rs.getString("CustomerName");
+                        String customerEmail = rs.getString("CustomerEmail");
+                        String customerPhone = rs.getString("CustomerPhone");
+                        String customerAddress = rs.getString("CustomerAddress");
+
+                        nameCheckout.setText(customerName);
+                        emailCheckout.setText(customerEmail);
+                        phoneCheckout.setText((customerPhone != null) ? customerPhone : "");
+                        addressCheckout.setText((customerAddress != null) ? customerAddress : "");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "User information not found.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            } catch (SQLException e) {
+                JOptionPane.showMessageDialog(this, "Error retrieving user information: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "No user logged in or signed up.", "Login Required", JOptionPane.WARNING_MESSAGE);
+        }
+    }
+    
     private void customizeButton() {
-        // Assuming the button is named exitButton in the design mode
         Exit_front2.setUI(new RoundButtonUI());
         Minimize_front2.setUI(new RoundButtonUI());
         backBut.setUI(new RoundButtonUI());
     }
+    
+    private long calculateRentalHours() {
+        SelectedDate startDateValue = startDate.getSelectedDate();
+        SelectedDate endDateValue = endDate.getSelectedDate();
+        LocalTime startTimeValue = startTime.getSelectedTime();
+        LocalTime endTimeValue = endTime.getSelectedTime();
+
+        if (startDateValue == null || endDateValue == null || startTimeValue == null || endTimeValue == null) {
+            return 0;
+        }
+
+        // Assuming SelectedDate has a method to convert to LocalDate
+        LocalDate startDateLocal = LocalDate.of(startDateValue.getYear(), startDateValue.getMonth(), startDateValue.getDay());
+        LocalDate endDateLocal = LocalDate.of(endDateValue.getYear(), endDateValue.getMonth(), endDateValue.getDay());
+
+        LocalDateTime startDateTime = startDateLocal.atTime(startTimeValue);
+        LocalDateTime endDateTime = endDateLocal.atTime(endTimeValue);
+
+        Duration duration = Duration.between(startDateTime, endDateTime);
+
+        // Calculate the total hours between the start and end dates
+        return duration.toHours();
+    }
+
+    private void updateTotalCost() {
+        long rentalHours = calculateRentalHours();
+
+        double totalCostValue = 0.0;
+        for (EquipmentCount item : parentFrame.getCartItems()) {
+            double hourlyRate = item.getPrice() / 12.0; // Assume 12-hour rental periods
+            totalCostValue += hourlyRate * rentalHours;
+        }
+
+        totalCost.setText(String.format("%.2f", totalCostValue));
+        System.out.println("Updated total cost: " + totalCostValue);
+    }
+
+    
+    private void removeIndividualItemFromCart(int row, EquipmentCount item) {
+        parentFrame.getCartItems().remove(row);
+        int currentCount = parentFrame.equipmentQuantities.getOrDefault(item.getName(), 0);
+        if (currentCount > 1) {
+            parentFrame.equipmentQuantities.put(item.getName(), currentCount - 1);
+        } else {
+            parentFrame.equipmentQuantities.remove(item.getName());
+        }
+        updateTotalCost();
+        JOptionPane.showMessageDialog(parentFrame, item.getName() + " removed from the cart.", "Item Removed", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void removePackageItemsFromCart(EquipmentCount packageItem) {
+        int packageID = packageItem.getID();
+        System.out.printf("Removing package: %s, Package ID: %d%n", packageItem.getName(), packageID);
+
+        // Remove the package from the cart
+        parentFrame.getCartItems().remove(packageItem);
+
+        JOptionPane.showMessageDialog(parentFrame, "Package " + packageItem.getName() + " removed from the cart.", "Package Removed", JOptionPane.INFORMATION_MESSAGE);
+
+        // Update the cart table after removal
+        updateCartTable(parentFrame.getCartItems());
+        updateTotalCost();
+        System.out.println("Cart table updated.");
+    }
+
     
     public void updateCartTable(List<EquipmentCount> cartItems) {
         CartTableModel cartModel = new CartTableModel(cartItems);
         equipTable.setModel(cartModel);
         equipTable.revalidate();
         equipTable.repaint();
+        retrieveUserInfo();
     }
-    
-    private void nameCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameCheckoutActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_nameCheckoutActionPerformed
 
-    private void textField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textField1ActionPerformed
+    private void addressCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addressCheckoutActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textField1ActionPerformed
+    }//GEN-LAST:event_addressCheckoutActionPerformed
 
     private void backButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_backButActionPerformed
         parentFrame.getCardLayout().show(parentFrame.getCardPanel(), "StorePanel");
@@ -486,21 +613,179 @@ public class Cart extends javax.swing.JPanel {
         // TODO add your handling code here:
     }//GEN-LAST:event_dateEditor2ActionPerformed
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private void totalCostActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_totalCostActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_totalCostActionPerformed
 
+    private void nameCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_nameCheckoutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_nameCheckoutActionPerformed
 
+    private void emailCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_emailCheckoutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_emailCheckoutActionPerformed
+
+    private void phoneCheckoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_phoneCheckoutActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_phoneCheckoutActionPerformed
+
+    private void placeRentActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_placeRentActionPerformed
+        // Fetch information from checkout fields
+        String customerName = nameCheckout.getText();
+        String customerEmail = emailCheckout.getText();
+        String customerPhone = phoneCheckout.getText();
+        String customerAddress = addressCheckout.getText();
+        double totalCostValue = Double.parseDouble(totalCost.getText());
+        String paymentMethods = (String) PaymentMethod.getSelectedItem();
+
+        String paymentMethod = "";
+        if (paymentMethods.equals("Cash")) {
+            paymentMethod = "1";
+        } else if (paymentMethods.equals("Card")) {
+            paymentMethod = "2";
+        } else if (paymentMethods.equals("Cheque")) {
+            paymentMethod = "3";
+        } else if (paymentMethods.equals("Online")) {
+            paymentMethod = "4";
+        }
+
+        // Fetch date and time information
+        SelectedDate startDateValue = startDate.getSelectedDate();
+        SelectedDate endDateValue = endDate.getSelectedDate();
+        LocalTime startTimeValue = startTime.getSelectedTime();
+        LocalTime endTimeValue = endTime.getSelectedTime();
+
+        LocalDateTime startDateTime = LocalDateTime.of(startDateValue.getYear(), startDateValue.getMonth(), startDateValue.getDay(), startTimeValue.getHour(), startTimeValue.getMinute());
+        LocalDateTime endDateTime = LocalDateTime.of(endDateValue.getYear(), endDateValue.getMonth(), endDateValue.getDay(), endTimeValue.getHour(), endTimeValue.getMinute());
+
+        Connection connect = null;
+        PreparedStatement updateCustomerStmt = null;
+        PreparedStatement insertOrderStmt = null;
+        PreparedStatement insertCustomerListStmt = null;
+        PreparedStatement updateEquipmentStmt = null;
+
+        try {
+            // Connect to the database
+            connect = Connectosql.getInstance().getConnection();
+            connect.setAutoCommit(false);  // Begin transaction
+
+            // Update customer information
+            String updateCustomerQuery = "UPDATE userlist SET CustomerName = ?, CustomerPhone = ?, CustomerAddress = ? WHERE CustomerEmail = ?";
+            updateCustomerStmt = connect.prepareStatement(updateCustomerQuery);
+            updateCustomerStmt.setString(1, customerName);
+            updateCustomerStmt.setString(2, customerPhone);
+            updateCustomerStmt.setString(3, customerAddress);
+            updateCustomerStmt.setString(4, customerEmail);
+            updateCustomerStmt.executeUpdate();
+
+            // Insert order information
+            String insertOrderQuery = "INSERT INTO customerorder (CustomerPaymentID, CustomerStartDate, CustomerEndDate, TotalCost, UserID, ReturnStatus) " +
+                                      "VALUES (?, ?, ?, ?, (SELECT UserID FROM userlist WHERE CustomerEmail = ?), ?)";
+            insertOrderStmt = connect.prepareStatement(insertOrderQuery, Statement.RETURN_GENERATED_KEYS);
+            insertOrderStmt.setString(1, paymentMethod);
+            insertOrderStmt.setTimestamp(2, Timestamp.valueOf(startDateTime));
+            insertOrderStmt.setTimestamp(3, Timestamp.valueOf(endDateTime));
+            insertOrderStmt.setDouble(4, totalCostValue);
+            insertOrderStmt.setString(5, customerEmail);
+            insertOrderStmt.setBoolean(6, false);
+            insertOrderStmt.executeUpdate();
+
+            // Retrieve generated CustomerOrderID
+            ResultSet generatedKeys = insertOrderStmt.getGeneratedKeys();
+            int customerOrderID = 0;
+            if (generatedKeys.next()) {
+                customerOrderID = generatedKeys.getInt(1);
+            }
+
+            // Insert rented equipment or package details and update their availability
+            for (EquipmentCount item : parentFrame.getCartItems()) {
+                if (item.isPartOfPackage()) {
+                    // Insert package equipment and update their availability
+                    String selectPackageEquipmentsQuery = "SELECT EquipmentID FROM packageequipment WHERE PackageID = ?";
+                    try (PreparedStatement selectPackageEquipmentsStmt = connect.prepareStatement(selectPackageEquipmentsQuery)) {
+                        selectPackageEquipmentsStmt.setInt(1, item.getID());
+                        try (ResultSet rs = selectPackageEquipmentsStmt.executeQuery()) {
+                            while (rs.next()) {
+                                int equipmentID = rs.getInt("EquipmentID");
+                                insertCustomerList(connect, customerOrderID, equipmentID);
+
+                                // Update equipment availability
+                                String updateEquipmentQuery = "UPDATE equipment SET EquipmentAvailability = FALSE WHERE EquipmentID = ?";
+                                try (PreparedStatement updateEquipmentStmtInLoop = connect.prepareStatement(updateEquipmentQuery)) {
+                                    updateEquipmentStmtInLoop.setInt(1, equipmentID);
+                                    updateEquipmentStmtInLoop.executeUpdate();
+                                }
+                            }
+                        }
+                    }
+                } else {
+                    // Insert individual equipment and update availability
+                    insertCustomerList(connect, customerOrderID, item.getID());
+
+                    // Update equipment availability
+                    String updateEquipmentQuery = "UPDATE equipment SET EquipmentAvailability = FALSE WHERE EquipmentID = ? LIMIT ?";
+                    updateEquipmentStmt = connect.prepareStatement(updateEquipmentQuery);
+                    updateEquipmentStmt.setInt(1, item.getID());
+                    updateEquipmentStmt.setInt(2, item.getAvailableCount()); // Use availableCount as quantity
+                    updateEquipmentStmt.executeUpdate();
+                }
+            }
+
+            connect.commit();  // Commit transaction
+            JOptionPane.showMessageDialog(this, "Order placed successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+            // Reset login/signup information
+            SignUp.signedUpUserName = null;
+            SignUp.signedUpUserEmail = null;
+            Login.loggedInUserName = null;
+            Login.loggedInUserEmail = null;
+
+            // Restart the Store class
+            new Store().setVisible(true);
+            parentFrame.dispose();
+
+        } catch (SQLException e) {
+            if (connect != null) {
+                try {
+                    connect.rollback();  // Rollback transaction on error
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            JOptionPane.showMessageDialog(this, "Error placing order: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        } finally {
+            // Ensure resources are closed
+            try {
+                if (updateCustomerStmt != null) updateCustomerStmt.close();
+                if (insertOrderStmt != null) insertOrderStmt.close();
+                if (insertCustomerListStmt != null) insertCustomerListStmt.close();
+                if (updateEquipmentStmt != null) updateEquipmentStmt.close();
+                if (connect != null) connect.close();
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+        }
+    }//GEN-LAST:event_placeRentActionPerformed
+
+    private void insertCustomerList(Connection connect, int customerOrderID, int equipmentID) throws SQLException {
+        String insertCustomerListQuery = "INSERT INTO customerlist (CustomerOrderID, EquipmentID) VALUES (?, ?)";
+        try (PreparedStatement insertCustomerListStmt = connect.prepareStatement(insertCustomerListQuery)) {
+            insertCustomerListStmt.setInt(1, customerOrderID);
+            insertCustomerListStmt.setInt(2, equipmentID);
+            insertCustomerListStmt.executeUpdate();
+        }
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton Checkout;
     private javax.swing.JButton Exit_front2;
     private javax.swing.JPanel MainPanelDrag2;
     private javax.swing.JButton Minimize_front2;
     private javax.swing.JComboBox<String> PaymentMethod;
+    private java.awt.TextField addressCheckout;
     private javax.swing.JButton backBut;
     private javax.swing.JTextField dateEditor;
     private javax.swing.JTextField dateEditor2;
-    private java.awt.TextField emailCheckout;
+    private javax.swing.JTextField emailCheckout;
     private com.raven.datechooser.DateChooser endDate;
     private raven.datetime.component.time.TimePicker endTime;
     private javax.swing.JScrollPane equipScroll;
@@ -517,13 +802,13 @@ public class Cart extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel8;
-    private javax.swing.JTextField jTextField1;
-    private java.awt.TextField nameCheckout;
-    private java.awt.TextField phoneCheckout;
+    private javax.swing.JTextField nameCheckout;
+    private javax.swing.JTextField phoneCheckout;
+    private javax.swing.JButton placeRent;
     private com.raven.datechooser.DateChooser startDate;
     private raven.datetime.component.time.TimePicker startTime;
-    private java.awt.TextField textField1;
     private javax.swing.JFormattedTextField timeEditor;
     private javax.swing.JFormattedTextField timeEditor2;
+    private javax.swing.JTextField totalCost;
     // End of variables declaration//GEN-END:variables
 }

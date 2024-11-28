@@ -4,12 +4,12 @@
  */
 package GUI;
 
-import GUI.CustomerSide.Customer;
 import GUI.Extras.RoundButtonUI;
 import GUI.AdminDashboard.Display_Inv;
 import GUI.AdminDashboard.PackageEquip;
 import GUI.AdminDashboard.ViewCusto;
 import GUI.AdminDashboard.Main_Menu;
+import GUI.CustomerSide.Store;
 import GUI.Extras.Connectosql;
 import java.awt.Point;
 import javax.swing.JFrame;
@@ -30,7 +30,7 @@ public class GuiFer extends javax.swing.JFrame {
      * Creates new form GuiFer
      */
     private Point initialClick;
-    private boolean isCustomerFrameOpen = false;
+    private boolean isStoreFrameOpen = false;
     
     public GuiFer() {
         Connectosql dbk = Connectosql.getInstance();
@@ -199,13 +199,13 @@ public class GuiFer extends javax.swing.JFrame {
         jPanel6.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "FER", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel6.setForeground(new java.awt.Color(153, 153, 153));
 
-        jLabel1.setFont(new java.awt.Font("Gagalin", 0, 48)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setText("WELCOME ");
 
         jPanel3.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.LOWERED));
 
-        jLabel2.setFont(new java.awt.Font("Gagalin", 0, 48)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jLabel2.setForeground(new java.awt.Color(51, 51, 51));
         jLabel2.setText("TO");
 
@@ -226,7 +226,7 @@ public class GuiFer extends javax.swing.JFrame {
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
-        jLabel3.setFont(new java.awt.Font("Gagalin", 0, 48)); // NOI18N
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 48)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 255));
         jLabel3.setText("FILM EQUIPMENT RENTAL");
 
@@ -250,18 +250,18 @@ public class GuiFer extends javax.swing.JFrame {
                 .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel6Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 224, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(292, 292, 292))
+                .addContainerGap(111, Short.MAX_VALUE)
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 664, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(52, 52, 52))
             .addGroup(jPanel6Layout.createSequentialGroup()
                 .addGroup(jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(165, 165, 165)
-                        .addComponent(jLabel3))
+                        .addGap(277, 277, 277)
+                        .addComponent(jLabel1))
                     .addGroup(jPanel6Layout.createSequentialGroup()
-                        .addGap(283, 283, 283)
+                        .addGap(274, 274, 274)
                         .addComponent(EnterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 253, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(174, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel6Layout.setVerticalGroup(
             jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -270,11 +270,11 @@ public class GuiFer extends javax.swing.JFrame {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(EnterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(55, Short.MAX_VALUE))
+                .addContainerGap(49, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -376,17 +376,17 @@ public class GuiFer extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    public void openCustomerFrame() {
-        if (!isCustomerFrameOpen) {
-            Customer customerFrame = new Customer();
-            customerFrame.setVisible(true);
-            isCustomerFrameOpen = true; // Update flag when frame is opened
-
+    public void openStoreFrame() {
+        if (!isStoreFrameOpen) {
+            Store store = new Store();
+            store.setVisible(true);
+            isStoreFrameOpen = true; // Update flag when frame is opened
+            this.dispose();
             // Add a listener to reset the flag when the frame is closed
-            customerFrame.addWindowListener(new java.awt.event.WindowAdapter() {
+            store.addWindowListener(new java.awt.event.WindowAdapter() {
                 @Override
                 public void windowClosed(java.awt.event.WindowEvent windowEvent) {
-                    isCustomerFrameOpen = false;
+                    isStoreFrameOpen = false;
                 }
             });
         }

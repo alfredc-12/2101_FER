@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/GUI/CustomerSide/Store.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>837</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
-        <group>
-            <file>file:/C:/Users/Allend/OneDrive/Desktop/SS%20for%20DSBM/2101_FER/2101_FER/FerProject2/src/GUI/Extras/PackageDAO.java</file>
-            <file>file:/C:/Users/Allend/OneDrive/Desktop/SS%20for%20DSBM/2101_FER/2101_FER/FerProject2/src/GUI/AdminDashboard/EditBundle.java</file>
-            <file>file:/C:/Users/Allend/OneDrive/Desktop/SS%20for%20DSBM/2101_FER/2101_FER/FerProject2/src/GUI/AdminDashboard/ReturnCalc.java</file>
-        </group>
+        <group/>
     </open-files>
 </project-private>

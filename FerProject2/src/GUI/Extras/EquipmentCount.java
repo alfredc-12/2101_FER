@@ -1,4 +1,5 @@
 package GUI.Extras;
+
 public class EquipmentCount {
     private int id;
     private String name;
@@ -9,6 +10,7 @@ public class EquipmentCount {
     private String description;
     private byte[] image;
     private boolean availability;
+    private boolean partOfPackage;  // New field
 
     public EquipmentCount(String name, double price, int totalCount, int availableCount, int categoryID, String description) {
         this.name = name;
@@ -17,6 +19,19 @@ public class EquipmentCount {
         this.availableCount = availableCount;
         this.categoryID = categoryID;
         this.description = description;
+        this.partOfPackage = false;  // Default value
+    }
+    
+    public EquipmentCount(int id, String name, double price, int totalCount, int availableCount, int categoryID, String description, byte[] image, boolean availability) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.totalCount = totalCount;
+        this.availableCount = availableCount;
+        this.categoryID = categoryID;
+        this.description = description;
+        this.image = image;
+        this.availability = availability;
     }
 
     // Getter and setter for ID
@@ -45,6 +60,11 @@ public class EquipmentCount {
     // Getter for price
     public double getPrice() {
         return price;
+    }
+
+    // Setter for price
+    public void setPrice(double price) {
+        this.price = price;
     }
 
     // Getter for totalCount
@@ -78,5 +98,14 @@ public class EquipmentCount {
 
     public void setAvailability(boolean availability) {
         this.availability = availability;
+    }
+
+    // Getter and setter for partOfPackage
+    public boolean isPartOfPackage() {
+        return partOfPackage;
+    }
+
+    public void setPartOfPackage(boolean partOfPackage) {
+        this.partOfPackage = partOfPackage;
     }
 }

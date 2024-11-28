@@ -4,8 +4,8 @@ import javax.swing.table.AbstractTableModel;
 import java.util.List;
 
 public class CartTableModel extends AbstractTableModel {
-    private final List<EquipmentCount> cartItems;
-    private final String[] columnNames = {"Equipment Name", "Rent Price"};
+    private List<EquipmentCount> cartItems;
+    private final String[] columnNames = {"Name", "Price"};
 
     public CartTableModel(List<EquipmentCount> cartItems) {
         this.cartItems = cartItems;
@@ -23,19 +23,19 @@ public class CartTableModel extends AbstractTableModel {
 
     @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
-        EquipmentCount equipment = cartItems.get(rowIndex);
+        EquipmentCount item = cartItems.get(rowIndex);
         switch (columnIndex) {
             case 0:
-                return equipment.getName();
+                return item.getName();
             case 1:
-                return String.format("%.2f", equipment.getPrice()); // Format price as needed
+                return item.getPrice();
             default:
                 return null;
         }
     }
 
     @Override
-    public String getColumnName(int columnIndex) {
-        return columnNames[columnIndex];
+    public String getColumnName(int column) {
+        return columnNames[column];
     }
 }

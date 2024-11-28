@@ -48,7 +48,6 @@ public class Store extends javax.swing.JFrame {
 
     public Store() {
         equipmentDAO = new EquipmentDAO();
-        
         this.setUndecorated(true); 
         initComponents();
         initializeEquipmentQuantities();
@@ -63,7 +62,6 @@ public class Store extends javax.swing.JFrame {
         this.setVisible(true);
         cartPanel = new Cart(this);
         customizeButton();
-        
         cardPanel.add(this.getContentPane(), "StorePanel");
         cardPanel.add(cartPanel, "CartPanel");
         
@@ -454,11 +452,25 @@ public class Store extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void initializeEquipmentQuantities() {
-        List<EquipmentCount> allEquipment = equipmentDAO.getAllEquipment(); // Fetch all equipment
+        List<EquipmentCount> allEquipment = equipmentDAO.getAllEquipment();
+        Map<String, Integer> totalCountMap = new HashMap<>();
+        Map<String, Integer> availableCountMap = new HashMap<>();
+
         for (EquipmentCount equipment : allEquipment) {
-            initialAvailableQuantities.put(equipment.getName(), equipment.getAvailableCount()); // Store actual available count
-            equipmentQuantities.put(equipment.getName(), 0); // Start with 0 in the cart
+            String name = equipment.getName();
+            totalCountMap.put(name, totalCountMap.getOrDefault(name, 0) + 1);
+            if (equipment.isAvailable()) {
+                availableCountMap.put(name, availableCountMap.getOrDefault(name, 0) + 1);
+            }
         }
+
+        for (String name : totalCountMap.keySet()) {
+            int totalCount = totalCountMap.get(name);
+            int availableCount = availableCountMap.getOrDefault(name, 0);
+            initialAvailableQuantities.put(name, availableCount);
+            equipmentQuantities.put(name, 0); // Start with 0 in the cart
+        }
+
         System.out.println("Initialized equipment quantities: " + equipmentQuantities);
         System.out.println("Initialized available quantities: " + initialAvailableQuantities);
     }
@@ -474,12 +486,26 @@ public class Store extends javax.swing.JFrame {
         return cartItems;
     }
 
-    public void addToCart(EquipmentCount equipment) {
-        cartItems.add(equipment);
+    private void addToCart(EquipmentCount item, boolean isPackageItem, double packagePrice) {
+        String itemName = item.getName();
+        int initialCount = initialAvailableQuantities.getOrDefault(itemName, 0);
+        int currentCartCount = equipmentQuantities.getOrDefault(itemName, 0);
 
-        // Update the quantities in the HashMap
-        equipmentQuantities.put(equipment.getName(), equipmentQuantities.getOrDefault(equipment.getName(), 0) + 1);
+        if (currentCartCount < initialCount) {
+            equipmentQuantities.put(itemName, currentCartCount + 1);
+
+            EquipmentCount newItem = new EquipmentCount(item.getID(), item.getName(), item.getPrice(), item.getTotalCount(), item.getAvailableCount(), item.getCategoryID(), item.getDescription(), item.getImage(), item.isAvailable());
+            newItem.setPartOfPackage(isPackageItem);
+            newItem.setPrice(isPackageItem && currentCartCount == 0 ? packagePrice : item.getPrice());
+
+            this.getCartItems().add(newItem);
+
+            System.out.printf("Added %s to cart. Current in-cart count: %d, Initial count: %d%n", itemName, equipmentQuantities.get(itemName), initialCount);
+        } else {
+            JOptionPane.showMessageDialog(this, "Cannot add more " + itemName + ". Maximum stock reached.", "Stock Limit", JOptionPane.ERROR_MESSAGE);
+        }
     }
+
     
     public CardLayout getCardLayout() {
         return cardLayout;
@@ -515,34 +541,34 @@ public class Store extends javax.swing.JFrame {
             }
         }
 
-        if (allAvailable) {
-            for (EquipmentCount item : packageItems) {
-                String itemName = item.getName();
-                int inCartCount = equipmentQuantities.getOrDefault(itemName, 0);
-                addToCart(item);
-                System.out.printf("Updated %s in cart. New count in cart: %d%n", itemName, equipmentQuantities.get(itemName));
-            }
+        System.out.printf("Final package availability calculated: %d%n", packageAvailableCount);
+        System.out.printf("All items available: %b%n", allAvailable);
 
+        if (allAvailable) {
+            this.getCartItems().add(packageEquipment);  // Add the package to the cart
+            System.out.printf("Added package: %s, New Package Available Count: %d%n", packageEquipment.getName(), packageAvailableCount - 1);
             int newPackageAvailableCount = packageAvailableCount - 1;
             qtyBox.setText(String.format("Available: %d", newPackageAvailableCount));
-            System.out.printf("Added package: %s, New Package Available Count: %d%n", packageEquipment.getName(), newPackageAvailableCount);
         } else {
             System.out.printf("Failed to add package: %s due to insufficient stock%n", packageEquipment.getName());
         }
+
+        // Debugging: Print updated equipment quantities
+        System.out.println("Updated equipment quantities after adding package: " + equipmentQuantities);
     }
 
     private void loadEquipmentTables() {
         // Load and set up tables for each category
-        loadEquipmentTable(CameraScroll, equipmentDAO.getEquipmentCountByCategory(1));
-        loadEquipmentTable(AudioScroll, equipmentDAO.getEquipmentCountByCategory(3));
-        loadEquipmentTable(LightingScroll, equipmentDAO.getEquipmentCountByCategory(2));
-        loadEquipmentTable(MiscellanScroll, equipmentDAO.getEquipmentCountByCategory(4));
-        loadEquipmentTable(packageScroll, equipmentDAO.getPackageList()); // Added package data loading
+        loadEquipmentTable(CameraScroll, equipmentDAO.getEquipmentCountByCategory(1), cameraTable);
+        loadEquipmentTable(AudioScroll, equipmentDAO.getEquipmentCountByCategory(3), audioTable);
+        loadEquipmentTable(LightingScroll, equipmentDAO.getEquipmentCountByCategory(2), lightingTable);
+        loadEquipmentTable(MiscellanScroll, equipmentDAO.getEquipmentCountByCategory(4), miscellaneousTable);
+        loadEquipmentTable(packageScroll, equipmentDAO.getPackageList(), packageTable); // Added package data loading
     }
 
-    private void loadEquipmentTable(JScrollPane scrollPane, List<EquipmentCount> equipmentList) {
+    private void loadEquipmentTable(JScrollPane scrollPane, List<EquipmentCount> equipmentList, JTable table) {
         EquipmentTableModel tableModel = new EquipmentTableModel(equipmentList);
-        JTable table = new JTable(tableModel);
+        table.setModel(tableModel);
         table.setDefaultRenderer(Object.class, new EquipmentTableCellRenderer(equipmentDAO)); // Pass EquipmentDAO
         table.setRowHeight(95); // Adjust row height to fit images and names
 
@@ -560,46 +586,37 @@ public class Store extends javax.swing.JFrame {
             column.setPreferredWidth(130); // Adjust width for each column to handle long names
         }
 
-        // Add mouse listener for double-click to preview equipment
+        // Add mouse listener for double-click to preview equipment or package
         table.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
+                currentTable = table; // Update currentTable when the table is clicked
                 if (e.getClickCount() == 2) {
                     int row = table.getSelectedRow();
                     int column = table.getSelectedColumn(); // Ensure column is correctly referenced
                     EquipmentCount equipment = (EquipmentCount) table.getValueAt(row, column);
                     int equipmentID = equipment.getID();
                     System.out.println("Selected Equipment ID: " + equipmentID);
-                    EquipmentCount detailedEquipment = equipmentDAO.getEquipmentByName(equipment.getName());
-                    if (detailedEquipment != null) {
-                        currentlyPreviewedEquipment = detailedEquipment;
-                        updateDetails(detailedEquipment, equipmentID);
-                        table.setColumnSelectionInterval(column, column); // Ensure correct column selection
+
+                    if (table == packageTable) {
+                        EquipmentCount detailedEquipment = equipmentDAO.getPackageByName(equipment.getName());
+                        if (detailedEquipment != null) {
+                            detailedEquipment.setPartOfPackage(true);  // Mark as part of a package
+                            currentlyPreviewedEquipment = detailedEquipment;
+                            updateDetails(detailedEquipment, equipmentID);
+                            table.setColumnSelectionInterval(column, column); // Ensure correct column selection
+                        } else {
+                            System.out.println("No detailed package found for " + equipment.getName());
+                        }
                     } else {
-                        System.out.println("No detailed equipment found for " + equipment.getName());
-                    }
-                }
-            }
-        });
-
-        // Add mouse listener for double-click to preview package
-        table.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int row = table.getSelectedRow();
-                    int column = table.getSelectedColumn();
-                    System.out.println("Clicked row: " + row + ", column: " + column); // Debug output
-
-                    EquipmentCount equipment = (EquipmentCount) table.getValueAt(row, column);
-                    System.out.println("Selected Package: " + equipment.getName()); // Debug output
-
-                    int equipmentID = equipment.getID();
-                    EquipmentCount detailedEquipment = equipmentDAO.getPackageByName(equipment.getName());
-                    if (detailedEquipment != null) {
-                        currentlyPreviewedEquipment = detailedEquipment;
-                        updateDetails(detailedEquipment, equipmentID);
-                        table.setColumnSelectionInterval(column, column);
-                    } else {
-                        System.out.println("No detailed package found for " + equipment.getName());
+                        EquipmentCount detailedEquipment = equipmentDAO.getEquipmentByName(equipment.getName());
+                        if (detailedEquipment != null) {
+                            detailedEquipment.setPartOfPackage(false);  // Mark as not part of a package
+                            currentlyPreviewedEquipment = detailedEquipment;
+                            updateDetails(detailedEquipment, equipmentID);
+                            table.setColumnSelectionInterval(column, column); // Ensure correct column selection
+                        } else {
+                            System.out.println("No detailed equipment found for " + equipment.getName());
+                        }
                     }
                 }
             }
@@ -664,7 +681,7 @@ public class Store extends javax.swing.JFrame {
             System.out.println("Package availability calculated: " + packageAvailableCount);
             qtyBox.setText(String.format("Available: %d", packageAvailableCount));
         } else {
-            int initialCount = equipment.getAvailableCount();
+            int initialCount = initialAvailableQuantities.getOrDefault(equipment.getName(), 0);
             int inCartCount = equipmentQuantities.getOrDefault(equipment.getName(), 0);
             int availableStock = initialCount - inCartCount;
             qtyBox.setText(String.format("Available: %d", availableStock));
@@ -707,28 +724,58 @@ public class Store extends javax.swing.JFrame {
             }
         });
     }
+    
+    private void addIndividualEquipmentToCart(EquipmentCount equipment) {
+        String equipmentName = equipment.getName();
+        int initialCount = initialAvailableQuantities.getOrDefault(equipmentName, 0);
+        int inCartCount = equipmentQuantities.getOrDefault(equipmentName, 0);
+        int availableCount = initialCount - inCartCount;
 
+        if (availableCount > 0) {
+            addToCart(equipment, false, 0);
+
+            equipmentQuantities.put(equipmentName, inCartCount + 1);
+
+            int newAvailableCount = initialCount - (inCartCount + 1);
+            qtyBox.setText(String.format("Available: %d", newAvailableCount));
+            System.out.println("Added to cart: " + equipmentName);
+        } else {
+            System.out.println("No available stock for " + equipmentName);
+            JOptionPane.showMessageDialog(this, "No available stock for " + equipmentName, "Stock Unavailable", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+        
+    public List<EquipmentCount> getPackageItems(int packageID) {
+        return equipmentDAO.getEquipmentListDetailsByPackageID(packageID);
+    }
+    
     private void Add1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_Add1ActionPerformed
+        
+        if (SignUp.signedUpUserName == null && SignUp.signedUpUserEmail == null && Login.loggedInUserName == null && Login.loggedInUserEmail == null) {
+            JOptionPane.showMessageDialog(this, "Please log in to add items to your cart.", "Login Required", JOptionPane.WARNING_MESSAGE);
+            if (!loginFrame) {
+            Login login = new Login();
+            login.setVisible(true);
+            loginFrame = true; // Update flag when frame is opened
+
+            // Add a listener to reset the flag when the frame is closed
+            login.addWindowListener(new java.awt.event.WindowAdapter() {
+                @Override
+                public void windowClosed(java.awt.event.WindowEvent windowEvent) {
+                    loginFrame = false;
+                }
+            });
+            }
+        }
+        
         if (currentlyPreviewedEquipment != null) {
-            String equipmentName = currentlyPreviewedEquipment.getName();
-            int initialCount = currentlyPreviewedEquipment.getAvailableCount();
-            int inCartCount = equipmentQuantities.getOrDefault(equipmentName, 0);
-            int availableCount = initialCount - inCartCount;
+            boolean isFromPackageTable = (currentTable == packageTable);
+            boolean isPackageItem = currentlyPreviewedEquipment.isPartOfPackage();
 
-            if (availableCount > 0) {
-                // Add to cart
-                addToCart(currentlyPreviewedEquipment);
-
-                // Update the quantity in the HashMap
-                equipmentQuantities.put(equipmentName, inCartCount + 1);
-
-                // Calculate new available count
-                int newAvailableCount = initialCount - (inCartCount + 1);
-                qtyBox.setText(String.format("Available: %d", newAvailableCount));
-                System.out.println("Added to cart: " + equipmentName);
+            if (isFromPackageTable || isPackageItem) {
+                addPackageToCart(currentlyPreviewedEquipment);
             } else {
-                System.out.println("No available stock for " + equipmentName);
-                JOptionPane.showMessageDialog(this, "No available stock for " + equipmentName, "Stock Unavailable", JOptionPane.ERROR_MESSAGE);
+                addIndividualEquipmentToCart(currentlyPreviewedEquipment);
             }
         } else {
             System.out.println("No equipment or package is currently previewed.");
@@ -830,7 +877,6 @@ public class Store extends javax.swing.JFrame {
     private javax.swing.JButton Minimize_front;
     private javax.swing.JScrollPane MiscellanScroll;
     private javax.swing.JPanel Price;
-    private javax.swing.JPanel Price1;
     private javax.swing.JPanel Price2;
     private javax.swing.JButton Resize_front;
     private javax.swing.JTable audioTable;
@@ -849,7 +895,6 @@ public class Store extends javax.swing.JFrame {
     private javax.swing.JScrollPane packageScroll;
     private javax.swing.JTable packageTable;
     private javax.swing.JLabel priceBox;
-    private javax.swing.JLabel priceBox1;
     private javax.swing.JButton proceed;
     private javax.swing.JLabel qtyBox;
     private javax.swing.JButton user;
