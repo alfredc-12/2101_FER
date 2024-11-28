@@ -408,7 +408,8 @@ public class Store extends javax.swing.JFrame {
                 .addGap(0, 5, Short.MAX_VALUE))
         );
 
-        user.setText("user");
+        user.setBackground(new java.awt.Color(51, 51, 51));
+        user.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-user-25.png"))); // NOI18N
         user.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 userActionPerformed(evt);

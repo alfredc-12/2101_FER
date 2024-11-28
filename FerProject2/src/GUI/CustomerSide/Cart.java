@@ -202,6 +202,9 @@ public class Cart extends javax.swing.JPanel {
         jLabel9.setForeground(new java.awt.Color(255, 255, 255));
         jLabel9.setText("Total Cost");
 
+        totalCost.setBackground(new java.awt.Color(51, 51, 51));
+        totalCost.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        totalCost.setForeground(new java.awt.Color(255, 255, 255));
         totalCost.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 totalCostActionPerformed(evt);
@@ -233,18 +236,27 @@ public class Cart extends javax.swing.JPanel {
             }
         });
 
+        nameCheckout.setBackground(new java.awt.Color(51, 51, 51));
+        nameCheckout.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        nameCheckout.setForeground(new java.awt.Color(255, 255, 255));
         nameCheckout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 nameCheckoutActionPerformed(evt);
             }
         });
 
+        emailCheckout.setBackground(new java.awt.Color(51, 51, 51));
+        emailCheckout.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        emailCheckout.setForeground(new java.awt.Color(255, 255, 255));
         emailCheckout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 emailCheckoutActionPerformed(evt);
             }
         });
 
+        phoneCheckout.setBackground(new java.awt.Color(51, 51, 51));
+        phoneCheckout.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        phoneCheckout.setForeground(new java.awt.Color(255, 255, 255));
         phoneCheckout.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 phoneCheckoutActionPerformed(evt);

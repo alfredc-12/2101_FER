@@ -97,7 +97,7 @@ public class PackageEquip extends javax.swing.JPanel {
         CustomerOrderBut = new javax.swing.JButton();
         jPanel7 = new javax.swing.JPanel();
         jLabel11 = new javax.swing.JLabel();
-        jPanel8 = new javax.swing.JPanel();
+        jPanel6 = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
         OpenMenu = new javax.swing.JButton();
         Reports = new javax.swing.JButton();
@@ -464,7 +464,7 @@ public class PackageEquip extends javax.swing.JPanel {
         jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "FER", javax.swing.border.TitledBorder.DEFAULT_JUSTIFICATION, javax.swing.border.TitledBorder.DEFAULT_POSITION, new java.awt.Font("Segoe UI", 1, 12), new java.awt.Color(255, 255, 255))); // NOI18N
         jPanel2.setForeground(new java.awt.Color(255, 255, 255));
 
-        DisplayBut.setBackground(new java.awt.Color(153, 153, 153));
+        DisplayBut.setBackground(new java.awt.Color(51, 51, 51));
         DisplayBut.setFont(new java.awt.Font("Segoe UI", 1, 10)); // NOI18N
         DisplayBut.setForeground(new java.awt.Color(255, 255, 255));
         DisplayBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-show-property-25.png"))); // NOI18N
@@ -475,7 +475,7 @@ public class PackageEquip extends javax.swing.JPanel {
             }
         });
 
-        BundleBut.setBackground(new java.awt.Color(153, 153, 153));
+        BundleBut.setBackground(new java.awt.Color(51, 51, 51));
         BundleBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         BundleBut.setForeground(new java.awt.Color(255, 255, 255));
         BundleBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-add-25.png"))); // NOI18N
@@ -486,7 +486,7 @@ public class PackageEquip extends javax.swing.JPanel {
             }
         });
 
-        CustomerOrderBut.setBackground(new java.awt.Color(153, 153, 153));
+        CustomerOrderBut.setBackground(new java.awt.Color(51, 51, 51));
         CustomerOrderBut.setFont(new java.awt.Font("Segoe UI", 1, 8)); // NOI18N
         CustomerOrderBut.setForeground(new java.awt.Color(255, 255, 255));
         CustomerOrderBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-create-order-25.png"))); // NOI18N
@@ -508,38 +508,38 @@ public class PackageEquip extends javax.swing.JPanel {
         jPanel7.setLayout(jPanel7Layout);
         jPanel7Layout.setHorizontalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel7Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(jPanel7Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
                 .addComponent(jLabel11)
-                .addGap(27, 27, 27))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel7Layout.setVerticalGroup(
             jPanel7Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel11, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        jPanel8.setBackground(new java.awt.Color(51, 51, 51));
-        jPanel8.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
+        jPanel6.setBackground(new java.awt.Color(51, 51, 51));
+        jPanel6.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
         jLabel6.setFont(new java.awt.Font("Gagalin", 0, 24)); // NOI18N
         jLabel6.setForeground(new java.awt.Color(255, 255, 255));
         jLabel6.setText("ADMIN");
 
-        javax.swing.GroupLayout jPanel8Layout = new javax.swing.GroupLayout(jPanel8);
-        jPanel8.setLayout(jPanel8Layout);
-        jPanel8Layout.setHorizontalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel8Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        javax.swing.GroupLayout jPanel6Layout = new javax.swing.GroupLayout(jPanel6);
+        jPanel6.setLayout(jPanel6Layout);
+        jPanel6Layout.setHorizontalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel6Layout.createSequentialGroup()
+                .addGap(42, 42, 42)
                 .addComponent(jLabel6)
-                .addGap(47, 47, 47))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        jPanel8Layout.setVerticalGroup(
-            jPanel8Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        jPanel6Layout.setVerticalGroup(
+            jPanel6Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jLabel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
-        OpenMenu.setBackground(new java.awt.Color(153, 153, 153));
+        OpenMenu.setBackground(new java.awt.Color(51, 51, 51));
         OpenMenu.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         OpenMenu.setForeground(new java.awt.Color(255, 255, 255));
         OpenMenu.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-menu-squared-25.png"))); // NOI18N
@@ -550,7 +550,7 @@ public class PackageEquip extends javax.swing.JPanel {
             }
         });
 
-        Reports.setBackground(new java.awt.Color(153, 153, 153));
+        Reports.setBackground(new java.awt.Color(51, 51, 51));
         Reports.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Reports.setForeground(new java.awt.Color(255, 255, 255));
         Reports.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-report-25.png"))); // NOI18N
@@ -561,7 +561,7 @@ public class PackageEquip extends javax.swing.JPanel {
             }
         });
 
-        EditFront.setBackground(new java.awt.Color(153, 153, 153));
+        EditFront.setBackground(new java.awt.Color(51, 51, 51));
         EditFront.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         EditFront.setForeground(new java.awt.Color(255, 255, 255));
         EditFront.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-edit-25.png"))); // NOI18N
@@ -572,7 +572,7 @@ public class PackageEquip extends javax.swing.JPanel {
             }
         });
 
-        Returncalc.setBackground(new java.awt.Color(153, 153, 153));
+        Returncalc.setBackground(new java.awt.Color(51, 51, 51));
         Returncalc.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         Returncalc.setForeground(new java.awt.Color(255, 255, 255));
         Returncalc.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-return-25.png"))); // NOI18N
@@ -583,7 +583,7 @@ public class PackageEquip extends javax.swing.JPanel {
             }
         });
 
-        AddBut.setBackground(new java.awt.Color(153, 153, 153));
+        AddBut.setBackground(new java.awt.Color(51, 51, 51));
         AddBut.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         AddBut.setForeground(new java.awt.Color(255, 255, 255));
         AddBut.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-add-25.png"))); // NOI18N
@@ -598,7 +598,7 @@ public class PackageEquip extends javax.swing.JPanel {
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel6, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addComponent(jPanel7, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(12, 12, 12)
@@ -609,7 +609,7 @@ public class PackageEquip extends javax.swing.JPanel {
                     .addComponent(CustomerOrderBut, javax.swing.GroupLayout.DEFAULT_SIZE, 137, Short.MAX_VALUE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
-                .addGap(0, 12, Short.MAX_VALUE)
+                .addGap(0, 0, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(Returncalc, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(EditFront, javax.swing.GroupLayout.PREFERRED_SIZE, 137, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -620,7 +620,7 @@ public class PackageEquip extends javax.swing.JPanel {
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addComponent(jPanel8, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jPanel6, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(AddBut, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -653,7 +653,7 @@ public class PackageEquip extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(EmptyPannel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(16, Short.MAX_VALUE))
+                .addContainerGap(26, Short.MAX_VALUE))
             .addComponent(MainPanelDrag, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
@@ -674,7 +674,7 @@ public class PackageEquip extends javax.swing.JPanel {
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -978,10 +978,28 @@ public class PackageEquip extends javax.swing.JPanel {
 
     private void EditFrontActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_EditFrontActionPerformed
         // TODO add your handling code here:
+        GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        EditBundle report = new EditBundle(parentFrame);
+
+        parentFrame.setContentPane(report);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_EditFrontActionPerformed
 
     private void ReturncalcActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ReturncalcActionPerformed
         // TODO add your handling code here:
+        GuiFer parentFrame = (GuiFer) this.getTopLevelAncestor();
+
+        // Pass the JFrame to the Main_Menu constructor
+        ReturnCalc returns = new ReturnCalc(parentFrame);
+
+        // Set the new panel as the content pane
+        parentFrame.setContentPane(returns);
+
+        parentFrame.revalidate();
+        parentFrame.repaint();
     }//GEN-LAST:event_ReturncalcActionPerformed
 
     private void AddButActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AddButActionPerformed
@@ -1035,8 +1053,8 @@ public class PackageEquip extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel6;
     private javax.swing.JPanel jPanel7;
-    private javax.swing.JPanel jPanel8;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JTextField packageNameText;
     private javax.swing.JTextField rentedPrice;
