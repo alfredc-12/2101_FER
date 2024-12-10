@@ -26,6 +26,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author leyzu
@@ -33,6 +35,48 @@ import java.sql.Statement;
 public class Cart extends javax.swing.JPanel {
     private Point initialClick;
     private Store parentFrame;
+    
+    public Cart(Store parentFrame, List<EquipmentCount> selectedItems) {
+        this.parentFrame = parentFrame;
+        initComponents();
+        startTime.setEditor(timeEditor);
+        endTime.setEditor(timeEditor2);
+        startTime.now();
+        startDate.toDay();
+        totalCost.setEditable(false);
+        parentFrame.enablePanelDragging(MainPanelDrag2);
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Item");
+        model.addColumn("Price"); // Add a column for price if needed
+        customizeButton();
+        for (EquipmentCount item : selectedItems) {
+            model.addRow(new Object[]{item.getName(), item.getPrice()}); // Assuming getName() and getPrice() methods exist
+        }
+        
+        startTime.addTimeSelectionListener(e -> updateTotalCost2());
+        endTime.addTimeSelectionListener(e -> updateTotalCost2());
+        startDate.addPropertyChangeListener(e -> updateTotalCost2());
+        endDate.addPropertyChangeListener(e -> updateTotalCost2());
+        equipTable.setModel(model);
+        updateTotalCost2();
+        parentFrame.setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+    }
+
+    // Getter method para sa equipTable
+    public JTable getEquipTable() {
+        return equipTable;
+    }
+    
+    // Optional: Method to update the equipTable later if needed
+    public void updateEquipTable(List<String> selectedItems) {
+        DefaultTableModel model = (DefaultTableModel) equipTable.getModel();
+        model.setRowCount(0); // Clear the existing rows
+
+        // I-add ang mga bagong selected items sa model
+        for (String item : selectedItems) {
+            model.addRow(new Object[]{item});
+        }
+    }
     
     public Cart(Store frame) {
         initComponents();
@@ -499,7 +543,7 @@ public class Cart extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void retrieveUserInfo() {
+    public void retrieveUserInfo() {
         // Check if user is signed up or logged in
         String email = (SignUp.signedUpUserEmail != null) ? SignUp.signedUpUserEmail : Login.loggedInUserEmail;
 
@@ -560,6 +604,35 @@ public class Cart extends javax.swing.JPanel {
         // Calculate the total hours between the start and end dates
         return duration.toHours();
     }
+    
+    private void updateTotalCost2() {
+        long rentalHours = calculateRentalHours();
+        System.out.println("Rental Hours: " + rentalHours); // Debugging statement
+        double totalCostValue = 0.0;
+
+        // Get the model of the equipTable
+        DefaultTableModel model = (DefaultTableModel) equipTable.getModel();
+
+        // Iterate through the rows of the equipTable
+        for (int i = 0; i < model.getRowCount(); i++) {
+            // Get the item name and price from the table
+            double itemPrice = (Double) model.getValueAt(i, 1); // Assuming the second column is the price
+
+            // Calculate the hourly rate (assuming 12-hour rental periods)
+            double hourlyRate = itemPrice / 12.0;
+
+            // Calculate the total cost for this item based on rental hours
+            totalCostValue += hourlyRate * rentalHours;
+
+            // Debugging statement to show the calculation for each item
+            System.out.println("Hourly Rate: " + hourlyRate + ", Cost for Rental Hours: " + (hourlyRate * rentalHours));
+        }
+
+        // Update the total cost text field
+        totalCost.setText(String.format("%.2f", totalCostValue));
+        System.out.println("Updated Total Cost: " + totalCostValue); // Debugging statement
+
+    }
 
     private void updateTotalCost() {
         long rentalHours = calculateRentalHours();
@@ -573,7 +646,6 @@ public class Cart extends javax.swing.JPanel {
         totalCost.setText(String.format("%.2f", totalCostValue));
         System.out.println("Updated total cost: " + totalCostValue);
     }
-
     
     private void removeIndividualItemFromCart(int row, EquipmentCount item) {
         parentFrame.getCartItems().remove(row);

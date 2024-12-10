@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableCellRenderer;
 
+// PackageTableCellRenderer class
 public class PackageTableCellRenderer extends DefaultTableCellRenderer {
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -19,11 +20,13 @@ public class PackageTableCellRenderer extends DefaultTableCellRenderer {
         JPanel panel = new JPanel();
         panel.setLayout(new BorderLayout());
 
-        JLabel nameLabel = new JLabel(pkg.getPackageName());
+        JLabel nameLabel = new JLabel(pkg.getPackageName(), JLabel.CENTER);
         nameLabel.setHorizontalAlignment(JLabel.CENTER);
-        
-        JLabel imageLabel = new JLabel(new ImageIcon(pkg.getPackageImage()));
+        nameLabel.setVerticalAlignment(JLabel.CENTER);
+
+        JLabel imageLabel = new JLabel(new ImageIcon(pkg.getPackageImage()), JLabel.CENTER);
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        imageLabel.setVerticalAlignment(JLabel.CENTER);
 
         panel.add(imageLabel, BorderLayout.CENTER);
         panel.add(nameLabel, BorderLayout.SOUTH);

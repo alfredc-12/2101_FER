@@ -104,6 +104,7 @@ public class Store extends javax.swing.JFrame {
         Exit_front = new javax.swing.JButton();
         Minimize_front = new javax.swing.JButton();
         user = new javax.swing.JButton();
+        customBundle = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -416,6 +417,17 @@ public class Store extends javax.swing.JFrame {
             }
         });
 
+        customBundle.setBackground(new java.awt.Color(51, 51, 51));
+        customBundle.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        customBundle.setForeground(new java.awt.Color(255, 255, 255));
+        customBundle.setIcon(new javax.swing.ImageIcon(getClass().getResource("/icons/icons8-edit-25.png"))); // NOI18N
+        customBundle.setText("BUNDLE");
+        customBundle.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                customBundleActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -427,7 +439,10 @@ public class Store extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(customBundle, javax.swing.GroupLayout.PREFERRED_SIZE, 113, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addComponent(jPanel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(83, 83, 83)
@@ -442,7 +457,9 @@ public class Store extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
-                        .addComponent(user, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(user, javax.swing.GroupLayout.DEFAULT_SIZE, 39, Short.MAX_VALUE)
+                            .addComponent(customBundle, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -834,6 +851,19 @@ public class Store extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_userActionPerformed
 
+    private void customBundleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_customBundleActionPerformed
+       
+         
+
+       CustomBundle equip = new CustomBundle(this);
+
+        // Set the new panel as the content pane
+        this.setContentPane(equip);
+
+        this.revalidate();
+        this.repaint();
+    }//GEN-LAST:event_customBundleActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -898,6 +928,7 @@ public class Store extends javax.swing.JFrame {
     private javax.swing.JTable audioTable;
     private javax.swing.JTable cameraTable;
     private javax.swing.JLabel categoryLabel;
+    private javax.swing.JButton customBundle;
     private javax.swing.JTextArea descBox;
     private javax.swing.JPanel imagePanel;
     private javax.swing.JPanel jPanel1;
